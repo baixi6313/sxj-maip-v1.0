@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hygzz.com/schema/maip-v1.0.json",
+  "title": "SXJ-MAIP/1.0 Message Envelope",
+  "description": "事现鉴·多智能体交互协议 v1.0 消息信封。一切交互必须以本结构承载；自然语言仅允许出现在 payload.note / payload.rationale / payload.grounds 内，且不得作为判定依据的唯一载体。",
+  "type": "object",
+  "required": [
+    "maip_version",
+    "msg_id",
+    "msg_type",
+    "case_id",
+    "round",
+    "from",
+    "to",
+    "issued_at",
+    "ledger_sha256",
+    "payload",
+    "hash",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "maip_version": {
+      "const": "1.0",
+      "description": "协议版本。不匹配的消息可被拒收。"
+    },
+    "msg_id": {
+      "type": "string",
+      "minLength": 4,
+      "description": "全局唯一消息标识。建议格式 <case_id>-r<round>-<seq>。"
+    },
+    "msg_type": {
+      "enum": [
+        "CALL",
+        "POSITION",
+        "CHALLENGE",
+        "REBUTTAL",
+        "BAIT_PROBE",
+        "BAIT_RESULT",
+        "CONVERGENCE_REPORT",
+        "ADJUDICATION",
+        "SUSPEND",
+        "RECEIPT"
+      ]
+    },
+    "case_id": {
+      "type": "string",
+      "description": "事现或议题标识，如 evt_008 / case_D1。"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "轮次。0 表示立案阶段消息。默认轮次上限 5。"
+    },
+    "from": {
+      "type": "object",
+      "required": ["agent_id", "role", "tier"],
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": { "type": "string", "minLength": 1 },
+        "role": {
+          "enum": ["ORC", "ORC-EVT", "ORC-VAL", "ORC-EXT", "VER-TECH", "VER-FACT", "VER-NORM", "CHAL", "COLD", "HOT", "ADJ", "REC"]
+        },
+        "tier": { "enum": ["COLD", "HOT", "HUMAN"] }
+      }
+    },
+    "to": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "收件方 agent_id 列表；'*' 表示全体广播。"
+    },
+    "in_reply_to": {
+      "type": ["string", "null"],
+      "description": "被回应的 msg_id。CHALLENGE / REBUTTAL 必填非空。"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ledger_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "送检档案 SXJ-verification-ledger.md 的 SHA-256。与当前档案不符则拒收，且发送方本案 trust 归零（L3）。"
+    },
+    "payload": { "type": "object" },
+    "prev_hash": {
+      "type": ["string", "null"],
+      "description": "上一条消息的 hash，构成哈希链。首条为 null。"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256(本条消息除 hash/signature 外字段的规范化 JSON)。"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "description": "SHA-256(agent_id + msg_id + hash) 的前 16 位。"
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "msg_type": { "const": "CALL" } } },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/payload_call" },
+          "from": { "properties": { "role": { "pattern": "^ORC" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "msg_type": { "const": "POSITION" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/payload_position" } } }
+    },
+    {
+      "if": { "properties": { "msg_type": { "const": "CHALLENGE" } } },
+      "then": {
+        "properties": { "payload": { "$ref": "#/$defs/payload_challenge" } },
+        "required": ["in_reply_to"]
+      }
+    },
+    {
+      "if": { "properties": { "msg_type": { "const": "REBUTTAL" } } },
+      "then": {
+        "properties": { "payload": { "$ref": "#/$defs/payload_rebuttal" } },
+        "required": ["in_reply_to"]
+      }
+    },
+    {
+      "if": { "properties": { "msg_type": { "const": "CONVERGENCE_REPORT" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/payload_convergence" } } }
+    },
+    {
+      "if": { "properties": { "msg_type": { "const": "ADJUDICATION" } } },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/payload_adjudication" },
+          "from": { "properties": { "role": { "const": "ADJ" }, "tier": { "const": "HUMAN" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "msg_type": { "enum": ["BAIT_PROBE", "BAIT_RESULT"] } } },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/payload_bait" },
+          "from": { "properties": { "role": { "const": "ORC-EXT" } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "申报置信度。缺失该字段的 POSITION 无效（§6.3）。"
+    },
+    "evidence_grade": {
+      "enum": ["E1", "E2", "E3", "E4"],
+      "description": "E1 官方一手可复核；E2 可达公开二手；E3 利害关系方一手陈述；E4 模型推断/AI 演绎（confidence 必须 ≤0.5 且不计入加权）。"
+    },
+    "verdict": {
+      "enum": ["PASS", "CONDITIONAL", "FAIL", "UNKNOWN"]
+    },
+    "payload_call": {
+      "type": "object",
+      "required": ["question", "scope", "required_roles", "deadline_position_h", "deadline_rebuttal_h", "theta"],
+      "properties": {
+        "question": { "type": "string", "minLength": 4 },
+        "scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } },
+        "required_roles": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "enum": ["VER-TECH", "VER-FACT", "VER-NORM"] },
+          "description": "三类互补验证角色必须齐备（§7.1）。"
+        },
+        "designated_challenger": { "type": "string", "description": "本轮轮值质疑者 agent_id（§7.3）。" },
+        "deadline_position_h": { "type": "integer", "minimum": 1, "default": 72 },
+        "deadline_rebuttal_h": { "type": "integer", "minimum": 1, "default": 48 },
+        "theta": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1,
+          "default": 0.75,
+          "description": "本案收敛阈值。必须在 CALL 中事先声明，不得事后调整。"
+        },
+        "attachments": { "type": "array", "items": { "type": "string" } },
+        "responsibility_chain": {
+          "type": "object",
+          "required": ["recorder", "verifiers", "adjudicator", "bearer"],
+          "description": "§10.4 责任边界：谁录入→谁核验→谁裁定→谁承担后果，四栏缺一不可。",
+          "properties": {
+            "recorder": { "type": "string" },
+            "verifiers": { "type": "array", "items": { "type": "string" } },
+            "adjudicator": { "type": "string" },
+            "bearer": { "type": "string" }
+          }
+        }
+      }
+    },
+    "payload_position": {
+      "type": "object",
+      "required": ["verdict", "confidence", "evidence_grade", "evidence_refs"],
+      "properties": {
+        "verdict": { "$ref": "#/$defs/verdict" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "evidence_grade": { "$ref": "#/$defs/evidence_grade" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "至少 1 条可达来源；为空时 verdict 必须为 UNKNOWN。"
+        },
+        "assertions": {
+          "type": "object",
+          "patternProperties": { "^A[0-9]{2}$": { "enum": ["pass", "fail", "unknown"] } },
+          "additionalProperties": false
+        },
+        "reservations": { "type": "array", "items": { "type": "string" } },
+        "reserved_for_adjudication": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "触及 R-1..R-6 保留事项时必填。此时 verdict 只能是 CONDITIONAL（咨询性建议）或 UNKNOWN，不得为 PASS/FAIL（§10.1）。"
+        },
+        "rationale": { "type": "string" },
+        "note": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "evidence_grade": { "const": "E4" } }, "required": ["evidence_grade"] },
+          "then": { "properties": { "confidence": { "maximum": 0.5 } } }
+        },
+        {
+          "if": { "properties": { "evidence_refs": { "maxItems": 0 } } },
+          "then": { "properties": { "verdict": { "const": "UNKNOWN" } } }
+        },
+        {
+          "if": {
+            "properties": { "reserved_for_adjudication": { "minItems": 1 } },
+            "required": ["reserved_for_adjudication"]
+          },
+          "then": { "properties": { "verdict": { "enum": ["CONDITIONAL", "UNKNOWN"] } } }
+        }
+      ]
+    },
+    "payload_challenge": {
+      "type": "object",
+      "required": ["target_agent", "target_msg_id", "target_claim", "challenge_type", "grounds"],
+      "properties": {
+        "target_agent": { "type": "string", "minLength": 1 },
+        "target_msg_id": { "type": "string", "minLength": 1 },
+        "target_claim": {
+          "type": "string",
+          "minLength": 8,
+          "description": "必须引用被质疑方原文片段，不得泛指（§7.2）。"
+        },
+        "challenge_type": {
+          "enum": ["EVIDENCE_GAP", "LOGIC_FLAW", "SCOPE_CREEP", "ROLE_BREACH", "CONTRADICTION"]
+        },
+        "grounds": { "type": "string", "minLength": 10 },
+        "proposed_fix": { "type": "string" }
+      }
+    },
+    "payload_rebuttal": {
+      "type": "object",
+      "required": ["in_reply_to_challenge", "response", "grounds"],
+      "properties": {
+        "in_reply_to_challenge": { "type": "string" },
+        "response": { "enum": ["ACCEPT", "PARTIAL", "REJECT"] },
+        "revised_verdict": { "oneOf": [{ "$ref": "#/$defs/verdict" }, { "type": "null" }] },
+        "revised_confidence": { "oneOf": [{ "$ref": "#/$defs/confidence" }, { "type": "null" }] },
+        "grounds": { "type": "string", "minLength": 10 }
+      }
+    },
+    "payload_bait": {
+      "type": "object",
+      "required": ["bait_id"],
+      "properties": {
+        "bait_id": { "type": "string" },
+        "bait_kind": { "enum": ["FAKE_TERM", "LOGIC_TRAP"] },
+        "probe_text": { "type": "string" },
+        "hit": { "type": "boolean" },
+        "evidence": { "type": "string" }
+      }
+    },
+    "payload_convergence": {
+      "type": "object",
+      "required": [
+        "weighted_agreement",
+        "threshold",
+        "participants",
+        "cold_count",
+        "byzantine_tolerance_f",
+        "challenges_raised",
+        "challenges_resolved",
+        "blocking_objections",
+        "degraded_mode",
+        "next_state"
+      ],
+      "properties": {
+        "weighted_agreement": { "type": "number", "minimum": 0, "maximum": 1 },
+        "threshold": { "type": "number", "minimum": 0.5, "maximum": 1 },
+        "participants": { "type": "integer", "minimum": 1 },
+        "cold_count": { "type": "integer", "minimum": 0 },
+        "byzantine_tolerance_f": { "type": "integer", "minimum": 0 },
+        "role_coverage": {
+          "type": "object",
+          "properties": {
+            "VER-TECH": { "type": "boolean" },
+            "VER-FACT": { "type": "boolean" },
+            "VER-NORM": { "type": "boolean" }
+          },
+          "description": "三类互补角色是否齐备。任一为 false 则不得进入 S5_CONVERGED。"
+        },
+        "challenges_raised": { "type": "integer", "minimum": 0 },
+        "challenges_resolved": { "type": "integer", "minimum": 0 },
+        "low_adversariality": { "type": "boolean", "description": "本轮仅轮值方提出质疑时标 true（§7.4）。" },
+        "blocking_objections": { "type": "array", "items": { "type": "string" } },
+        "degraded_mode": { "type": "boolean" },
+        "trust_adjustments": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "本轮对各方 trust_i 的调整记录。"
+        },
+        "next_state": {
+          "enum": ["S2_ROUND", "S5_CONVERGED", "S8_SUSPENDED", "BLOCKED_PENDING_FIX"],
+          "description": "存在任何 MUST 违规时必须为 BLOCKED_PENDING_FIX——先修正再重新提交，不得给出可推进的状态建议。"
+        },
+        "reserved_for_adjudication": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "payload_adjudication": {
+      "type": "object",
+      "required": ["decision", "scope", "basis", "effective_from", "human_signature"],
+      "properties": {
+        "decision": { "type": "string", "minLength": 4 },
+        "scope": { "type": "string" },
+        "basis": { "type": "string" },
+        "effective_from": { "type": "string" },
+        "revocable": { "type": "boolean", "default": true },
+        "reserved_item": {
+          "enum": ["R-1", "R-2", "R-3", "R-4", "R-5", "R-6"],
+          "description": "本裁定对应的保留事项编号（§10.1）。"
+        },
+        "human_signature": { "type": "string", "minLength": 2 }
+      }
+    }
+  }
+}
