@@ -1,0 +1,413 @@
+{
+  "_note": "SXJ-MAIP/1.0 完整一轮交互样例。案件 case_D1 = 揭露型事件（耿同学学术打假）的三值归类。本样例演示一个「结构全部合规、加权一致度达标，但因触及保留事项 R-2 而必须停在 S5_CONVERGED、不得由任何 AI 拍板」的标准案例。hash/prev_hash/signature 与收敛报告由 `python maip_check.py maip-example-round.json --fill` 自动计算。",
+  "case_id": "case_D1",
+  "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+  "messages": [
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-001",
+      "msg_type": "CALL",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "ORC-VAL-01",
+        "role": "ORC-VAL",
+        "tier": "HUMAN"
+      },
+      "to": [
+        "*"
+      ],
+      "in_reply_to": null,
+      "issued_at": "2026-08-02T09:00:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "question": "揭露型公共事件（以耿同学学术打假为例）在三值模型中应归为共济值、贡献值，还是不可归类？",
+        "scope": [
+          "三值定义对揭露型行为的适用性",
+          "以行为效果还是行为动机为定性依据",
+          "捏造证据情形下负贡献的触发条件"
+        ],
+        "out_of_scope": [
+          "A+B 权重公式（已挂起，本案不依赖）",
+          "对当事人个人的道德评价"
+        ],
+        "required_roles": [
+          "VER-TECH",
+          "VER-FACT",
+          "VER-NORM"
+        ],
+        "designated_challenger": "VER-NORM-Kimi",
+        "deadline_position_h": 72,
+        "deadline_rebuttal_h": 48,
+        "theta": 0.75,
+        "attachments": [
+          "SXJ-verification-ledger.md",
+          "SXJ-claims.json",
+          "events.html#evt_004"
+        ],
+        "responsibility_chain": {
+          "recorder": "白玺",
+          "verifiers": [
+            "VER-TECH-DuMate",
+            "VER-FACT-DeepSeek",
+            "VER-FACT-Yuanbao",
+            "VER-NORM-Kimi"
+          ],
+          "adjudicator": "白玺（决定层）",
+          "bearer": "事现鉴体系（对外效力由决定层承担）"
+        }
+      },
+      "prev_hash": null,
+      "hash": "31030e707657565366a45307f2861e408caa08e15d2e5c452eea5156b6678f79",
+      "signature": "321eda53615ed81d"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-002",
+      "msg_type": "POSITION",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-TECH-DuMate",
+        "role": "VER-TECH",
+        "tier": "COLD"
+      },
+      "to": [
+        "ORC-VAL-01"
+      ],
+      "in_reply_to": "case_D1-r1-001",
+      "issued_at": "2026-08-02T14:20:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "verdict": "UNKNOWN",
+        "confidence": 0.72,
+        "evidence_grade": "E1",
+        "evidence_refs": [
+          "SXJ-verification-ledger.md#D1",
+          "SXJ-claims.json#A07"
+        ],
+        "assertions": {
+          "A07": "unknown",
+          "A09": "pass"
+        },
+        "reservations": [
+          "档案自身已声明 D1 为跨账本类型冲突且未调和，技术层无法从既有结构推出唯一归类"
+        ],
+        "reserved_for_adjudication": [
+          "R-2：三值分类的新类型裁定"
+        ],
+        "rationale": "从哈希链与档案一致性看，evt_004 记录完整、指纹一致，技术层无异议。但『归为哪一值』不是技术命题：既有三值定义中，共济值锚定生存权·按需，贡献值锚定按劳·净值，揭露型行为两者皆不完全契合。此为定义空缺而非数据缺失，属 R-2 保留事项，本节点按 §10.1 输出 UNKNOWN。",
+        "note": "技术层可确认：无论最终归类为何，evt_004 的证据链本身不构成阻碍。"
+      },
+      "prev_hash": "31030e707657565366a45307f2861e408caa08e15d2e5c452eea5156b6678f79",
+      "hash": "35e191758f561e3bb95903fb3b3d5182b131c7d66ce03eba1dda103a4ed95190",
+      "signature": "8316686ad7bbd645"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-003",
+      "msg_type": "POSITION",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-FACT-DeepSeek",
+        "role": "VER-FACT",
+        "tier": "HOT"
+      },
+      "to": [
+        "ORC-VAL-01"
+      ],
+      "in_reply_to": "case_D1-r1-001",
+      "issued_at": "2026-08-02T15:05:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "verdict": "CONDITIONAL",
+        "confidence": 0.81,
+        "evidence_grade": "E2",
+        "evidence_refs": [
+          "https://hygzz.cn/events#evt_004",
+          "公开报道：学术不端举报的事实认定过程"
+        ],
+        "assertions": {
+          "A07": "pass"
+        },
+        "reservations": [
+          "以『行为效果』定性可行，但需先给出『公共利益』的可操作边界，否则效果判断仍属主观"
+        ],
+        "reserved_for_adjudication": [
+          "R-2：三值分类的新类型裁定"
+        ],
+        "rationale": "事实层可核实：举证材料公开可查、被举报方回应可查、机构处理结果可查，属 E2 级可达来源。建议基于『行为效果』（是否实际增加公共可验证事实的存量）而非『行为动机』定性——动机不可观测，效果可观测。据此倾向归共济值：增加公共真相供给属市场失效领域，钱不能解决。附条件：需给出『公共利益』判定清单。",
+        "note": "若举报材料被证伪，同一行为应转为负贡献；该触发条件应写死在协议而非留待个案裁量。"
+      },
+      "prev_hash": "35e191758f561e3bb95903fb3b3d5182b131c7d66ce03eba1dda103a4ed95190",
+      "hash": "9af242f8ab7383d30a8dd31fd01d8ce8fdc1a1b148673cef1cdae965513b299f",
+      "signature": "15aab33e5c919d9a"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-004",
+      "msg_type": "POSITION",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-FACT-Yuanbao",
+        "role": "VER-FACT",
+        "tier": "HOT"
+      },
+      "to": [
+        "ORC-VAL-01"
+      ],
+      "in_reply_to": "case_D1-r1-001",
+      "issued_at": "2026-08-02T15:48:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "verdict": "CONDITIONAL",
+        "confidence": 0.7,
+        "evidence_grade": "E2",
+        "evidence_refs": [
+          "https://hygzz.cn/events#evt_004",
+          "机构公开处理结论"
+        ],
+        "assertions": {
+          "A07": "pass"
+        },
+        "reservations": [
+          "同意归共济值，但『公共利益动机 + 证据真实』两条件应为并列必要条件，缺一不可",
+          "须区分『揭露』与『指控』：前者提交可复核材料，后者仅作断言，二者不应同等对待"
+        ],
+        "reserved_for_adjudication": [
+          "R-2：三值分类的新类型裁定"
+        ],
+        "rationale": "本节点独立核对同一批公开来源，事实认定与 DeepSeek 一致。补充一条区分标准：是否随附可被第三方独立复核的材料。仅有断言而无可复核材料者，不构成『增加公共可验证事实存量』，故不应归共济值，应留在待证状态。",
+        "note": "该区分标准可直接落为录入表单的必填项，工程上可实施。"
+      },
+      "prev_hash": "9af242f8ab7383d30a8dd31fd01d8ce8fdc1a1b148673cef1cdae965513b299f",
+      "hash": "a0780d2bdd8a1427a1b8cf7a58eab28eb22e342a9a49d950a152219b14963582",
+      "signature": "de2a47e1db0d9353"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-005",
+      "msg_type": "POSITION",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-NORM-Kimi",
+        "role": "VER-NORM",
+        "tier": "HOT"
+      },
+      "to": [
+        "ORC-VAL-01"
+      ],
+      "in_reply_to": "case_D1-r1-001",
+      "issued_at": "2026-08-02T16:40:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "verdict": "CONDITIONAL",
+        "confidence": 0.68,
+        "evidence_grade": "E2",
+        "evidence_refs": [
+          "《世界人权宣言》第 19 条（表达自由）、第 22 条（社会保障）",
+          "SXJ-MAIP-v1.0.md#10.1"
+        ],
+        "assertions": {
+          "A07": "pass",
+          "A11": "pass"
+        },
+        "reservations": [
+          "归共济值不得被解读为『鼓励举报』，须同时写入对被举报方的程序保障",
+          "负贡献触发须满足既定四条件（主体性 / 因果性 / 可避免性 / 修复性），不得仅因『举报失实』即归责"
+        ],
+        "reserved_for_adjudication": [
+          "R-2：三值分类的新类型裁定",
+          "R-1：捏造证据情形下负贡献触发是否仍须满足四条件"
+        ],
+        "rationale": "合规层认为：揭露行为的价值在于恢复公共事实的可验证性，属非市场可结算的公共品，与共济值定义（钱不能解决、集体、非物）自洽。但归类必须绑定程序保障，否则协议会激励未经核实的指控。另须警示：『捏造证据→负贡献』的推论若不加四条件过滤，将与既有归责规则直接冲突。",
+        "note": "本节点为本轮轮值质疑者，将在广播后履行强制质疑义务。"
+      },
+      "prev_hash": "a0780d2bdd8a1427a1b8cf7a58eab28eb22e342a9a49d950a152219b14963582",
+      "hash": "f9280bd221e4cd31e32d246eccd41c9ab3015db27b1534c29bb10e59d26e86f7",
+      "signature": "15c4918541f2eeac"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-006",
+      "msg_type": "CHALLENGE",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-NORM-Kimi",
+        "role": "CHAL",
+        "tier": "HOT"
+      },
+      "to": [
+        "VER-FACT-DeepSeek",
+        "*"
+      ],
+      "in_reply_to": "case_D1-r1-003",
+      "issued_at": "2026-08-03T10:15:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "target_agent": "VER-FACT-DeepSeek",
+        "target_msg_id": "case_D1-r1-003",
+        "target_claim": "动机不可观测，效果可观测",
+        "challenge_type": "LOGIC_FLAW",
+        "grounds": "该论断在事实层成立，但推不出『因此应按效果定性』。效果同样存在观测窗口问题：揭露行为的公共效果往往在数月至数年后才显现，而三值归类需在事件录入时即完成。若严格按效果定性，则所有揭露型事件在录入当期都只能挂 UNKNOWN，事件簿将积压大量不可归类项，与『即时可累积』的设计目标冲突。请正面回应：效果尚未显现时如何归类？",
+        "proposed_fix": "引入『临时归类 + 效果窗口复核』两段式：录入时按证据真实性临时归共济值，设 180 日复核期，期满按实际效果确认或改判。"
+      },
+      "prev_hash": "f9280bd221e4cd31e32d246eccd41c9ab3015db27b1534c29bb10e59d26e86f7",
+      "hash": "f014d735c29eb45d9be569ffb4130037e0cd4d063abef36a5d784f1425bd71b3",
+      "signature": "065cb657ce40021f"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-007",
+      "msg_type": "CHALLENGE",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-TECH-DuMate",
+        "role": "VER-TECH",
+        "tier": "COLD"
+      },
+      "to": [
+        "VER-NORM-Kimi",
+        "*"
+      ],
+      "in_reply_to": "case_D1-r1-005",
+      "issued_at": "2026-08-03T11:02:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "target_agent": "VER-NORM-Kimi",
+        "target_msg_id": "case_D1-r1-005",
+        "target_claim": "归类必须绑定程序保障，否则协议会激励未经核实的指控",
+        "challenge_type": "SCOPE_CREEP",
+        "grounds": "本轮 CALL 的 out_of_scope 未排除程序保障，但 scope 三项均指向『如何归类』，不含『如何设计程序保障』。将归类结论与一套尚不存在的程序保障机制绑定，实际上把本轮可结论的问题改造成了不可结论的问题——这构成范围外延。本节点作为冷方无共创论语料，仅从协议文本判断：若每次归类都要求先完成配套机制设计，则任何归类都无法在有限轮次内收敛。",
+        "proposed_fix": "将『程序保障』拆为独立案件 case_DUE_PROCESS，本案仅就归类依据作结论，并在收敛报告中记为关联案件。"
+      },
+      "prev_hash": "f014d735c29eb45d9be569ffb4130037e0cd4d063abef36a5d784f1425bd71b3",
+      "hash": "2b3f88301edbae04cdfd63a0560098bb5fee6dfd1683380669c8f5b0b7c18292",
+      "signature": "b733157d93426c82"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-008",
+      "msg_type": "REBUTTAL",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-FACT-DeepSeek",
+        "role": "VER-FACT",
+        "tier": "HOT"
+      },
+      "to": [
+        "VER-NORM-Kimi",
+        "*"
+      ],
+      "in_reply_to": "case_D1-r1-006",
+      "issued_at": "2026-08-03T18:30:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "in_reply_to_challenge": "case_D1-r1-006",
+        "response": "PARTIAL",
+        "revised_verdict": "CONDITIONAL",
+        "revised_confidence": 0.74,
+        "grounds": "接受质疑中关于『观测窗口』的部分：原表述确实混淆了『效果可观测』与『效果已显现』。修正如下——定性依据不应是最终社会效果，而是『行为在发生时是否以增加公共可验证事实为直接指向』，这在录入当期即可判定（看举证是否指向可核查对象、是否随附可复核材料）。不接受『必须一律挂 UNKNOWN』的推论：该推论建立在『效果=最终社会影响』的解释上，而本节点原意为『行为的可核查指向性』。同意采纳所提两段式复核作为兜底机制。置信度由 0.81 下调至 0.74，以反映定义修正引入的不确定性。"
+      },
+      "prev_hash": "2b3f88301edbae04cdfd63a0560098bb5fee6dfd1683380669c8f5b0b7c18292",
+      "hash": "abb6b201cb6c91ea0bfe5aff4be39b64c5a9554c0122ff5e245ae4cb106906e2",
+      "signature": "a956212e2969da07"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-009",
+      "msg_type": "REBUTTAL",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "VER-NORM-Kimi",
+        "role": "VER-NORM",
+        "tier": "HOT"
+      },
+      "to": [
+        "VER-TECH-DuMate",
+        "*"
+      ],
+      "in_reply_to": "case_D1-r1-007",
+      "issued_at": "2026-08-03T20:10:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "in_reply_to_challenge": "case_D1-r1-007",
+        "response": "ACCEPT",
+        "revised_verdict": "CONDITIONAL",
+        "revised_confidence": 0.71,
+        "grounds": "接受范围外延的指认。本节点原意是提示风险，但以『必须绑定』的措辞把它变成了归类的前置条件，确属超出本轮 scope。修正：程序保障降级为本案的关联风险提示，不作为归类的前置条件；同意拆出独立案件 case_DUE_PROCESS。置信度由 0.68 微调至 0.71——移除了一个本不该由本轮承担的不确定性来源。"
+      },
+      "prev_hash": "abb6b201cb6c91ea0bfe5aff4be39b64c5a9554c0122ff5e245ae4cb106906e2",
+      "hash": "123df37e78fae1d4762152a5c693bc0355902f7ca074e96a79f93338e894a597",
+      "signature": "63274f3311d385aa"
+    },
+    {
+      "maip_version": "1.0",
+      "msg_id": "case_D1-r1-010",
+      "msg_type": "CONVERGENCE_REPORT",
+      "case_id": "case_D1",
+      "round": 1,
+      "from": {
+        "agent_id": "ORC-VAL-01",
+        "role": "ORC-VAL",
+        "tier": "HUMAN"
+      },
+      "to": [
+        "*"
+      ],
+      "in_reply_to": null,
+      "issued_at": "2026-08-04T09:00:00+08:00",
+      "ledger_sha256": "e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb",
+      "payload": {
+        "weighted_agreement": 1.0,
+        "threshold": 0.75,
+        "participants": 4,
+        "cold_count": 0,
+        "byzantine_tolerance_f": 1,
+        "role_coverage": {
+          "VER-TECH": true,
+          "VER-FACT": true,
+          "VER-NORM": true
+        },
+        "challenges_raised": 2,
+        "challenges_resolved": 2,
+        "low_adversariality": false,
+        "blocking_objections": [],
+        "degraded_mode": false,
+        "trust_adjustments": {},
+        "next_state": "S5_CONVERGED",
+        "reserved_for_adjudication": [
+          "R-1：捏造证据情形下负贡献触发是否仍须满足四条件",
+          "R-2：三值分类的新类型裁定"
+        ],
+        "related_cases": [
+          "case_DUE_PROCESS（程序保障，自本案拆出）"
+        ]
+      },
+      "prev_hash": "123df37e78fae1d4762152a5c693bc0355902f7ca074e96a79f93338e894a597",
+      "hash": "5561b0ab2fcd9e8f3d90e465d941d8257d37306252ca1e78041bf046240c23d7",
+      "signature": "b8bbfafa01029f14"
+    }
+  ],
+  "_expected_check_result": {
+    "note": "本样例是一个「结构全合规、但不可自动裁定」的标准案例。maip_check.py 应报出：",
+    "expects": [
+      "10 条消息全部通过信封与角色契约校验，无 MUST 违规",
+      "有效质疑 = 2（含 1 条非轮值方自发质疑）→ S3 门控通过，low_adversariality = false",
+      "三类互补角色齐备（VER-TECH / VER-FACT / VER-NORM）→ §7.1 通过",
+      "参与方 = 4 → 满足 n≥3f+1，f = 1",
+      "加权一致度 = 1.0 ≥ θ(0.75)，主流结论 CONDITIONAL",
+      "DuMate 因 verdict=UNKNOWN 记为 abstain，不计入加权分母",
+      "存在 reserved_for_adjudication（R-1 / R-2）→ 案件停在 S5_CONVERGED，禁止任何 agent 给出终局归类",
+      "cold_count = 0/2 → 即使裁定完成也不得进入 S7_PUBLISHED"
+    ],
+    "teaching_note": "把任一 VER 节点删掉，参与方降为 3，校验器会立刻以 §9.1 容错下限阻断——这演示了门控是真的在卡，而不是摆设。"
+  }
+}
