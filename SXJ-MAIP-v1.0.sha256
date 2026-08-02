@@ -1,11 +1,13 @@
-# SXJ-MAIP/1.0 指纹清单
-# 生成于 2026-08-02  | 校验方式: sha256sum -c SXJ-MAIP-v1.0.sha256
-29aea6bff57ab5b042af85d878114660ba84028a058e55d68149acf94e73542c  SXJ-MAIP-v1.0.md
-2c98aca8d9f563ee97ef94bf4cf4dfd8fcac187e4c4bdc6e9f0ef0b5c1a847a7  maip-v1.0-schema.json
+# SXJ-MAIP/1.0 套件指纹
+# 生成命令：sha256sum SXJ-MAIP-v1.0.md maip-v1.0-schema.json maip-example-round.json maip_check.py
+# 合并指纹 = SHA256(以下四行文本拼接，含换行)
+68a75820ec97aa80720d7c4935359847a4a1cd023de147b9ce04a048e327914c  SXJ-MAIP-v1.0.md
+1d92cf5db576e96b7074873b899c6b70906232dc5e4b6fed0e7f36b456c15ccb  maip-v1.0-schema.json
 a294644b4c79ffbb8cd8b05f3e3ddc80509946a7aa5966c5f66b85d5a200d74c  maip-example-round.json
 65daf1a0c5ec61c0ea669415587664ef02d347ea74bbe339f40d4a8fa41178c2  maip_check.py
 
-# 协议套件合并指纹 (对上述四行文本取 SHA-256):
-# 93f6b06c299fc3069ab6305a1942d4343a37fbddadce053d288093983cc9e48d
-# 关联档案 SXJ-verification-ledger.md 指纹:
-# e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb
+# 合并套件指纹
+bc87c5cdbcbd68618083c5b01960416deb2f10d82b3a448fc562da00c172b044  SXJ-MAIP-v1.0-suite.sha256
+
+# 事件簿（独立工件，被 MAIP 附录 C/E 引用）
+706e5c6abea40c9658ef7dd0017057ede9b0515ed54ee5e1a227804438ba4cb9  events.html
