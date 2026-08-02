@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>事现鉴：多智能体交互协议 v1.0 (SXJ-MAIP/1.0)</title>
+<style>
+  :root { --blue:#2F6FED; --gold:#C9A24B; --red:#A32D2D; --ink:#1a1a1a; --bg:#f5f3ee; --card:#fff; --line:#e4e0d8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; line-height:1.75; }
+  header { background:linear-gradient(135deg,var(--blue),#1d4fb0); color:#fff; padding:30px 22px 26px; }
+  header .kicker { letter-spacing:2px; font-size:12px; opacity:.85; }
+  header h1 { margin:6px 0 12px; font-size:24px; }
+  header .meta { font-size:13px; opacity:.95; }
+  header .meta code { background:rgba(255,255,255,.15); padding:1px 6px; border-radius:4px; font-size:12px; word-break:break-all; }
+  .badge { display:inline-block; background:var(--gold); color:#3a2c00; border-radius:4px; padding:1px 9px; font-size:12px; font-weight:600; }
+  main { max-width:960px; margin:0 auto; padding:20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .card h2 { color:var(--blue); font-size:19px; border-left:4px solid var(--gold); padding-left:10px; margin-top:0; }
+  .cover p { font-size:14.5px; }
+  .warn { background:#fff4e6; border:1px solid #ffd8a8; border-radius:8px; padding:11px 15px; color:#7a4b00; font-size:13.5px; }
+  .content { font-size:14.5px; }
+  .content h1, .content h2, .content h3 { color:var(--ink); line-height:1.4; }
+  .content h1 { font-size:22px; border-bottom:2px solid var(--gold); padding-bottom:6px; margin-top:28px; }
+  .content h2 { font-size:18px; margin-top:24px; color:var(--blue); }
+  .content h3 { font-size:15.5px; margin-top:18px; }
+  .content code { background:#eef1f8; color:#1d4fb0; padding:1px 5px; border-radius:4px; font-size:13px; }
+  .content pre { background:#1e1e1e; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto; font-size:12.5px; }
+  .content pre code { background:none; color:inherit; padding:0; }
+  .content table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; }
+  .content th, .content td { border:1px solid var(--line); padding:7px 10px; text-align:left; }
+  .content th { background:#eef1f8; }
+  .content blockquote { border-left:4px solid var(--gold); margin:12px 0; padding:6px 14px; color:#555; background:#faf8f2; }
+  .toc { background:#faf8f2; }
+  .toc ul { list-style:none; padding-left:0; columns:2; }
+  .toc li { font-size:13px; margin:3px 0; }
+  .toc a { color:var(--blue); text-decoration:none; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+  button { background:var(--blue); color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:13px; }
+  button.alt { background:var(--gold); color:#3a2c00; }
+  footer { text-align:center; color:#888; font-size:12.5px; padding:26px 16px; line-height:1.9; }
+  footer a { color:var(--blue); }
+  footer code { background:#eee; padding:1px 5px; border-radius:4px; word-break:break-all; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">SXJ-MAIP / 1.0</div>
+  <h1>事现鉴：多智能体交互协议 v1.0</h1>
+  <div class="meta">
+    起草 / 汇编：<b>WorkBuddy（AI 协作工程师）</b>　·　日期 2026-08-02<br>
+    状态：<span class="badge">DRAFT · 待决定层（白玺）批准</span><br>
+    协议指纹 SHA256：<code>68a75820ec97aa80720d7c4935359847a4a1cd023de147b9ce04a048e327914c</code><br>
+    套件合并指纹：<code>unknown</code>
+  </div>
+</header>
+<main>
+
+<div class="card cover">
+  <h2>这是什么 / 给谁看</h2>
+  <p>这是一份<b>机器可读的多智能体交互协议</b>：规定多家 AI 如何就"某条事实是否可验证"进行轮值质疑、盲评、加权收敛，
+  同时把<b>哪些事只有人类能拍板</b>写死为保留事项。它把前几轮口头交互规则"协议化"，并用程序卡死（任何改动都可被哈希自洽校验发现）。</p>
+  <p class="warn"><b>裁决权归属：</b>本协议的<b>最终裁定权</b>属于人类决定层（白玺）。AI（含本页起草者 WorkBuddy（AI 协作工程师））仅负责起草、汇编与机器校验，
+  <b>不得</b>对 §10.1 所列保留事项（R-1~R-6）给出 PASS/FAIL 终局结论；AI 至多可输出 CONDITIONAL（咨询性建议）或 UNKNOWN，并须填 <code>reserved_for_adjudication</code>。</p>
+  <p>转发此页即等同转发整份协议正文 + 指纹 + 回执模板，无需再附其他文件。</p>
+</div>
+
+<article class="card content">
+<div class="toc">
+<ul>
+<li><a href="#v10">事现鉴：多智能体交互协议 v1.0</a><ul>
+<li><a href="#_1">第零章 大白话导读（不懂技术也能看懂这份协议在管什么）</a></li>
+<li><a href="#_2">第一章 适用范围与规范性用语</a><ul>
+<li><a href="#11">1.1 适用范围</a></li>
+<li><a href="#12">1.2 规范性用语</a></li>
+<li><a href="#13">1.3 设计原则（四条，不可删减）</a></li>
+</ul>
+</li>
+<li><a href="#_3">第二章 角色与身份</a><ul>
+<li><a href="#21">2.1 角色定义</a></li>
+<li><a href="#22-must">2.2 角色互斥（MUST）</a></li>
+<li><a href="#23-should">2.3 编排者拆分（SHOULD）</a></li>
+</ul>
+</li>
+<li><a href="#behavior-contract">第三章 行为契约（Behavior Contract）</a><ul>
+<li><a href="#31">3.1 契约通用字段</a></li>
+<li><a href="#32">3.2 各角色契约表</a></li>
+<li><a href="#33-must">3.3 契约违反的后果（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#message-envelope">第四章 结构化消息（Message Envelope）</a><ul>
+<li><a href="#41">4.1 统一信封</a></li>
+<li><a href="#42-payload">4.2 各消息类型的 payload 必填字段</a><ul>
+<li><a href="#421-call-orc">4.2.1 CALL（开轮，仅 ORC 可发）</a></li>
+<li><a href="#422-position">4.2.2 POSITION（立场，核心消息）</a></li>
+<li><a href="#423-challenge-1">4.2.3 CHALLENGE（质疑，本轮强制 ≥1 条）</a></li>
+<li><a href="#424-rebuttal">4.2.4 REBUTTAL（答辩）</a></li>
+<li><a href="#425-bait_probe-bait_result">4.2.5 BAIT_PROBE / BAIT_RESULT（冷方污染检测，见第八章）</a></li>
+<li><a href="#426-convergence_report-orc">4.2.6 CONVERGENCE_REPORT（收敛报告，仅 ORC 可发）</a></li>
+<li><a href="#427-adjudication-adj">4.2.7 ADJUDICATION（裁定，仅 ADJ 可发）</a></li>
+</ul>
+</li>
+<li><a href="#43-must">4.3 兼容既有回执（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#state-machine">第五章 生命周期门控（State Machine）</a><ul>
+<li><a href="#51">5.1 状态定义</a></li>
+<li><a href="#52-must">5.2 转移条件（门控，MUST 全部满足才可转移）</a></li>
+<li><a href="#53">5.3 超时与判弃</a></li>
+</ul>
+</li>
+<li><a href="#_4">第六章 圆桌互见与置信度加权判定</a><ul>
+<li><a href="#61-must">6.1 圆桌制（MUST）</a></li>
+<li><a href="#62">6.2 权重计算</a></li>
+<li><a href="#63-must">6.3 置信度强制申报（MUST）</a></li>
+<li><a href="#64-should">6.4 置信度校准（SHOULD）</a></li>
+</ul>
+</li>
+<li><a href="#_5">第七章 反同质化与强制质疑</a><ul>
+<li><a href="#71-must">7.1 功能互补（MUST）</a></li>
+<li><a href="#72-must">7.2 有效质疑的判据（MUST）</a></li>
+<li><a href="#73-must">7.3 轮值质疑者（MUST）</a></li>
+<li><a href="#74-should">7.4 肯定偏见抑制（SHOULD）</a></li>
+</ul>
+</li>
+<li><a href="#_6">第八章 冷方认定与污染检测</a><ul>
+<li><a href="#81-must">8.1 冷/热方定义（MUST）</a></li>
+<li><a href="#82-dyepack-must">8.2 诱饵检测（DyePack 式，MUST）</a></li>
+<li><a href="#83-must">8.3 诱饵池轮换（MUST）</a></li>
+<li><a href="#84-trust_imust">8.4 信任系数（trust_i）动态调整（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#_7">第九章 容错、法定人数与发布门槛</a><ul>
+<li><a href="#91-must">9.1 拜占庭容错基线（MUST）</a></li>
+<li><a href="#92-must-ai">9.2 发布门槛（MUST，不可由 AI 修改）</a></li>
+<li><a href="#93">9.3 门槛的双重理由</a></li>
+</ul>
+</li>
+<li><a href="#_8">第十章 人类在环与责任边界</a><ul>
+<li><a href="#101-must-not">10.1 决定层保留事项（MUST NOT 自动化）</a></li>
+<li><a href="#102-should">10.2 决策权动态转移（SHOULD）</a></li>
+<li><a href="#103-must">10.3 线下绿色通道（MUST）</a></li>
+<li><a href="#104-must">10.4 责任边界声明（MUST）</a></li>
+<li><a href="#105-r-6-must">10.5 协议审核部作为 R-6 的预审门（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#_9">第十一章 隐私与证据处理</a><ul>
+<li><a href="#111-must">11.1 最小化原则（MUST）</a></li>
+<li><a href="#112-should">11.2 可用不可见（SHOULD）</a></li>
+<li><a href="#113-must">11.3 哈希链（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#_10">第十二章 异议、申诉与回滚</a><ul>
+<li><a href="#121-blocking-objection">12.1 阻断性异议（Blocking Objection）</a></li>
+<li><a href="#122-may">12.2 申诉（MAY）</a></li>
+<li><a href="#123-must">12.3 回滚（MUST）</a></li>
+</ul>
+</li>
+<li><a href="#conformance">第十三章 一致性等级（Conformance）</a></li>
+<li><a href="#_11">第十四章 版本、指纹与变更</a></li>
+<li><a href="#a-schema">附录 A 机器可读 Schema</a></li>
+<li><a href="#b">附录 B 完整一轮交互样例</a></li>
+<li><a href="#c">附录 C 与既有工件的映射</a></li>
+<li><a href="#d">附录 D 规范性学术依据</a></li>
+<li><a href="#e-v10">附录 E v1.0 已知空缺（诚实暴露）</a></li>
+<li><a href="#f">附录 F 怎么用（大白话操作说明）</a><ul>
+<li><a href="#_12">起草期已完成的自测（六项反向测试全部被正确阻断）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="v10">事现鉴：多智能体交互协议 v1.0</h1>
+<p><strong>Shixianjian Multi-Agent Interaction Protocol, v1.0</strong>
+<strong>协议代号：SXJ-MAIP/1.0</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>协议名称</td>
+<td>事现鉴：多智能体交互协议</td>
+</tr>
+<tr>
+<td>版本</td>
+<td>v1.0（首个正式版）</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>草案·待决定层批准（DRAFT / Pending Adjudication）</td>
+</tr>
+<tr>
+<td>起草日期</td>
+<td>2026-08-02</td>
+</tr>
+<tr>
+<td>起草依据</td>
+<td>第一至第五轮多平台交互验证记录 + 公开学术文献（见附录 D）</td>
+</tr>
+<tr>
+<td>关联档案</td>
+<td><code>SXJ-verification-ledger.md</code>（指纹 <code>e0236e8c7ce78122a23cf73ff7132576f1336de540f99ed01bb4e621ff7b6ccb</code>）</td>
+</tr>
+<tr>
+<td>上位约束</td>
+<td>《世界人权宣言》第 22 条；共创论三值模型（共济值 / 贡献值 / 负贡献值）</td>
+</tr>
+<tr>
+<td>决定层</td>
+<td>白玺（首共创者，非执剑人）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_1">第零章　大白话导读（不懂技术也能看懂这份协议在管什么）</h2>
+<p><strong>一句话：这份协议是"开会规矩"，不是"技术手册"。</strong></p>
+<p>前面五轮，我们让六家 AI 一起讨论同一批问题。发现的最大毛病不是"AI 不够聪明"，而是<strong>没有开会规矩</strong>：</p>
+<ul>
+<li>有的家只写总结，不点名反驳别人 → 看着热闹，其实没交互；</li>
+<li>有的家说"通过"，但你不知道它是 95% 有把握还是 55% 硬撑 → 投票等于没投；</li>
+<li>大家看到别人的答案后容易跟风附和（学术上叫"肯定偏见"，实测 85–92%）→ 越讨论越同质；</li>
+<li>谁能拍板、谁只能提意见，没写清楚 → 出了事没法追责。</li>
+</ul>
+<p>所以这份协议干四件事：</p>
+<table>
+<thead>
+<tr>
+<th>规矩</th>
+<th>生活比喻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>谁能发言、发言必须包含什么</strong></td>
+<td>开会前先发言登记表：你是谁、你什么身份、你的结论、你有几成把握、你依据是什么</td>
+</tr>
+<tr>
+<td><strong>每一轮必须有人唱反调</strong></td>
+<td>不许全场鼓掌通过。没人提反对意见，这一轮作废重开</td>
+</tr>
+<tr>
+<td><strong>怎么算"大家谈拢了"</strong></td>
+<td>不是举手多数，是"按把握程度加权"，还要看反对方是不是被真正回应了</td>
+</tr>
+<tr>
+<td><strong>哪些事 AI 绝对不能自己定</strong></td>
+<td>涉及给人定罪（负贡献）、涉及社保资格、涉及发布——必须由人（白玺）签字</td>
+</tr>
+</tbody>
+</table>
+<p><strong>这份协议不发明新理论。</strong>它只是把学术界已经解过的题（协议驱动、圆桌讨论、蜜罐检测、拜占庭容错）拿来，套在事现鉴的实际场景上。理论层挂起的东西（比如三值权重公式），本协议<strong>不依赖</strong>它也能跑。</p>
+<hr />
+<h2 id="_2">第一章　适用范围与规范性用语</h2>
+<h3 id="11">1.1 适用范围</h3>
+<p>本协议适用于事现鉴（SXJ）体系内<strong>两个或两个以上智能体（含人类参与者）就同一"事现"进行结构化验证协作</strong>的全过程，包括但不限于：</p>
+<ol>
+<li>事现（事件）的立案、举证、交叉质证、收敛与裁定；</li>
+<li>外部平台 agent 对 <code>SXJ-verification-ledger.md</code> 的他验回执提交与计票；</li>
+<li>三值（共济值 A / 贡献值 B / 负贡献值 N）分类判定的协作流程；</li>
+<li>冷方（无语料独立平台）资格认定与污染检测。</li>
+</ol>
+<p><strong>不适用</strong>：单一智能体的独立作业；纯人类之间的讨论；不产生可记录判定的闲聊。</p>
+<h3 id="12">1.2 规范性用语</h3>
+<p>本协议中，<strong>MUST（必须）/ MUST NOT（禁止）/ SHOULD（应当）/ SHOULD NOT（不应）/ MAY（可以）</strong> 按 RFC 2119 语义使用。</p>
+<ul>
+<li>违反 <strong>MUST/MUST NOT</strong> 条款的消息或流程 → <strong>无效</strong>，不计入交互、不计入计票。</li>
+<li>违反 <strong>SHOULD</strong> 条款 → 有效但记入"质量瑕疵"，影响该参与方的信任系数（见 §8.4）。</li>
+</ul>
+<h3 id="13">1.3 设计原则（四条，不可删减）</h3>
+<table>
+<thead>
+<tr>
+<th>原则</th>
+<th>表述</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P1 协议优先</strong></td>
+<td>交互层缺陷用协议解决，不用"换更强的模型"解决</td>
+<td>MAST 失败三分类均衡（41.8/37/21.3）</td>
+</tr>
+<tr>
+<td><strong>P2 结构优先于措辞</strong></td>
+<td>一切判定以结构化字段承载；自然语言只作注释</td>
+<td>SEMAP 三原则</td>
+</tr>
+<tr>
+<td><strong>P3 异议是资产</strong></td>
+<td>无异议的共识视为未经检验的共识</td>
+<td>有限元 1120 次实验（肯定偏见 85–92%）</td>
+</tr>
+<tr>
+<td><strong>P4 人类保留最终裁量</strong></td>
+<td>关键决策不可被自动化</td>
+<td>法学/公共管理关于 AI 决策边界的通行结论</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_3">第二章　角色与身份</h2>
+<h3 id="21">2.1 角色定义</h3>
+<table>
+<thead>
+<tr>
+<th>角色代号</th>
+<th>名称</th>
+<th>职责</th>
+<th>可否单方裁定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ORC</strong></td>
+<td>编排者（Orchestrator）</td>
+<td>开轮、广播、计时、计票、出具收敛报告</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>VER-TECH</strong></td>
+<td>技术验证节点</td>
+<td>校验哈希链、签名、指纹一致性、格式合规</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>VER-FACT</strong></td>
+<td>事实验证节点</td>
+<td>核对外部可验证来源、证据可达性、时间线自洽</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>VER-NORM</strong></td>
+<td>合规验证节点</td>
+<td>核对法律法规、伦理、UDHR 第 22/25 条对齐、隐私</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>CHAL</strong></td>
+<td>质疑者（本轮轮值）</td>
+<td>强制提出至少一条实质异议</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>COLD</strong></td>
+<td>冷方（无共创论语料的独立外部平台）</td>
+<td>独立他验，计入发布门槛</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>HOT</strong></td>
+<td>热方（参与过共创论演化的平台）</td>
+<td>参与讨论与互证，<strong>不计入发布门槛</strong></td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>ADJ</strong></td>
+<td>决定层（人类，现为白玺）</td>
+<td>裁定保留事项、批准发布/撤回</td>
+<td>✅（唯一）</td>
+</tr>
+<tr>
+<td><strong>REC</strong></td>
+<td>记录人</td>
+<td>冻结证据、维护事件簿哈希链</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>REV</strong></td>
+<td>协议审核部（Protocol Review）</td>
+<td>R-6 修订预审门：受理提案、形式审查、清单核对、越权扫描、出具审核意见报送 ADJ</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-must">2.2 角色互斥（MUST）</h3>
+<ol>
+<li>同一参与方 <strong>MUST NOT</strong> 在同一案件中同时担任 <code>VER-TECH</code> / <code>VER-FACT</code> / <code>VER-NORM</code> 中的两个及以上角色。
+   - 例外：参与方总数 &lt; 4 时，允许兼任，但 <strong>MUST</strong> 在收敛报告中显式标注 <code>degraded_mode: true</code>，且该案件 <strong>MUST NOT</strong> 进入 <code>PUBLISHED</code> 状态。</li>
+<li><code>ORC</code> <strong>MUST NOT</strong> 兼任任何 <code>VER-*</code> 角色（编排者不投票）。</li>
+<li><code>ADJ</code> <strong>MUST NOT</strong> 在收敛（<code>CONVERGED</code>）之前发表带 verdict 的 <code>POSITION</code> 消息——防止决定层意见污染独立判定。</li>
+<li>冷方 <strong>MUST NOT</strong> 在被认定为冷方期间接收任何共创论内部语料（含本协议全文的理论章节）；仅可接收标准送检包。</li>
+<li><code>REV</code> <strong>MUST NOT</strong> 兼任 <code>ADJ</code>；提出修订的部门成员 <strong>MUST NOT</strong> 担任该案 <code>REV</code> 审核员（审核独立性，见 §10.5）。</li>
+</ol>
+<h3 id="23-should">2.3 编排者拆分（SHOULD）</h3>
+<p>不设单一超级编排者。<strong>SHOULD</strong> 按事务类型设专项编排者：</p>
+<ul>
+<li><code>ORC-EVT</code>：事现立案与验证</li>
+<li><code>ORC-VAL</code>：三值分类判定</li>
+<li><code>ORC-EXT</code>：外部他验与冷方管理</li>
+</ul>
+<p>理由：单点编排者是失败集中点，且易形成隐性权威。</p>
+<hr />
+<h2 id="behavior-contract">第三章　行为契约（Behavior Contract）</h2>
+<p>每个角色在进入案件前 <strong>MUST</strong> 声明并接受其行为契约。契约是机器可消费的结构，不是口头承诺。</p>
+<h3 id="31">3.1 契约通用字段</h3>
+<pre><code>role            角色代号
+accepts         本角色接受的消息类型白名单
+emits           本角色可发出的消息类型白名单
+must_include    发出消息时必填的载荷字段
+forbidden       明确禁止的行为
+timeout         响应时限（小时）
+</code></pre>
+<h3 id="32">3.2 各角色契约表</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>accepts</th>
+<th>emits</th>
+<th>关键禁止项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ORC</td>
+<td>全部</td>
+<td><code>CALL</code>, <code>CONVERGENCE_REPORT</code>, <code>SUSPEND</code></td>
+<td>禁止发表 <code>POSITION</code>；禁止修改他方消息内容</td>
+</tr>
+<tr>
+<td>VER-TECH</td>
+<td><code>CALL</code>, <code>POSITION</code>, <code>CHALLENGE</code></td>
+<td><code>POSITION</code>, <code>CHALLENGE</code>, <code>REBUTTAL</code></td>
+<td>禁止就法律/伦理问题给出 verdict</td>
+</tr>
+<tr>
+<td>VER-FACT</td>
+<td>同上</td>
+<td>同上</td>
+<td>禁止以"模型内部知识"替代外部来源；无可达来源时 verdict <strong>MUST</strong> 为 <code>unknown</code></td>
+</tr>
+<tr>
+<td>VER-NORM</td>
+<td>同上</td>
+<td>同上</td>
+<td>禁止就哈希/密码学正确性给出 verdict</td>
+</tr>
+<tr>
+<td>CHAL</td>
+<td><code>POSITION</code></td>
+<td><code>CHALLENGE</code></td>
+<td>禁止提交"我同意"型空质疑（见 §7.2 有效性判据）</td>
+</tr>
+<tr>
+<td>COLD</td>
+<td><code>CALL</code>, 送检包</td>
+<td><code>POSITION</code>, <code>RECEIPT</code></td>
+<td>禁止引用未在送检包内出现的共创论专有术语（触发诱饵检测）</td>
+</tr>
+<tr>
+<td>ADJ</td>
+<td>全部</td>
+<td><code>ADJUDICATION</code>, <code>RELEASE</code>, <code>REVOKE</code></td>
+<td>收敛前禁止发表 verdict</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-must">3.3 契约违反的后果（MUST）</h3>
+<table>
+<thead>
+<tr>
+<th>违反等级</th>
+<th>判定</th>
+<th>处置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 格式违反</td>
+<td>缺必填字段 / schema 不通过</td>
+<td>消息拒收，不计入本轮</td>
+</tr>
+<tr>
+<td>L2 越权</td>
+<td>发出角色白名单外的消息类型</td>
+<td>消息拒收 + 信任系数 ×0.9</td>
+</tr>
+<tr>
+<td>L3 指纹错配</td>
+<td><code>ledger_sha256</code> 与当前档案不符</td>
+<td>消息拒收 + 该方本案信任系数归零</td>
+</tr>
+<tr>
+<td>L4 污染命中</td>
+<td>诱饵术语命中（见 §8）</td>
+<td>冷方资格暂停，案件转 <code>SUSPENDED</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="message-envelope">第四章　结构化消息（Message Envelope）</h2>
+<h3 id="41">4.1 统一信封</h3>
+<p>一切交互 <strong>MUST</strong> 以下列信封承载。自然语言仅允许出现在 <code>payload.note</code> 与 <code>payload.rationale</code> 字段内，且 <strong>MUST NOT</strong> 作为判定依据的唯一载体。</p>
+<pre><code class="language-json">{
+  &quot;maip_version&quot;: &quot;1.0&quot;,
+  &quot;msg_id&quot;: &quot;字符串·全局唯一&quot;,
+  &quot;msg_type&quot;: &quot;CALL | POSITION | CHALLENGE | REBUTTAL | BAIT_PROBE | BAIT_RESULT | CONVERGENCE_REPORT | ADJUDICATION | SUSPEND | RECEIPT&quot;,
+  &quot;case_id&quot;: &quot;事现/议题标识，如 evt_008 或 case_D1&quot;,
+  &quot;round&quot;: 1,
+  &quot;from&quot;: {&quot;agent_id&quot;: &quot;...&quot;, &quot;role&quot;: &quot;VER-FACT&quot;, &quot;tier&quot;: &quot;COLD | HOT | HUMAN&quot;},
+  &quot;to&quot;: [&quot;*&quot;],
+  &quot;in_reply_to&quot;: &quot;被回应的 msg_id，可为 null&quot;,
+  &quot;issued_at&quot;: &quot;ISO-8601 时间戳&quot;,
+  &quot;ledger_sha256&quot;: &quot;送检档案指纹&quot;,
+  &quot;payload&quot;: { },
+  &quot;prev_hash&quot;: &quot;上一条消息的 hash&quot;,
+  &quot;hash&quot;: &quot;SHA-256(本条消息除 hash 外的规范化 JSON)&quot;,
+  &quot;signature&quot;: &quot;SHA-256(agent_id + msg_id + hash) 前 16 位&quot;
+}
+</code></pre>
+<h3 id="42-payload">4.2 各消息类型的 payload 必填字段</h3>
+<h4 id="421-call-orc">4.2.1 <code>CALL</code>（开轮，仅 ORC 可发）</h4>
+<pre><code class="language-json">{
+  &quot;question&quot;: &quot;本轮待决问题的单句表述&quot;,
+  &quot;scope&quot;: [&quot;允许讨论的范围&quot;],
+  &quot;out_of_scope&quot;: [&quot;本轮不讨论的范围&quot;],
+  &quot;required_roles&quot;: [&quot;VER-TECH&quot;, &quot;VER-FACT&quot;, &quot;VER-NORM&quot;],
+  &quot;deadline_position_h&quot;: 72,
+  &quot;deadline_rebuttal_h&quot;: 48,
+  &quot;attachments&quot;: [&quot;送检包文件清单&quot;]
+}
+</code></pre>
+<h4 id="422-position">4.2.2 <code>POSITION</code>（立场，核心消息）</h4>
+<pre><code class="language-json">{
+  &quot;verdict&quot;: &quot;PASS | CONDITIONAL | FAIL | UNKNOWN&quot;,
+  &quot;confidence&quot;: 0.87,
+  &quot;evidence_grade&quot;: &quot;E1 | E2 | E3 | E4&quot;,
+  &quot;evidence_refs&quot;: [&quot;可达 URL 或档案内锚点，至少 1 条；无则 verdict 必须为 UNKNOWN&quot;],
+  &quot;assertions&quot;: {&quot;A01&quot;: &quot;pass&quot;, &quot;A02&quot;: &quot;unknown&quot;},
+  &quot;reservations&quot;: [&quot;保留意见&quot;],
+  &quot;rationale&quot;: &quot;自然语言说明（仅注释用途）&quot;
+}
+</code></pre>
+<p><strong>证据等级（evidence_grade）定义</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td>官方/权威一手来源，可独立复核</td>
+<td>政府公告、法院文书、期刊原文</td>
+</tr>
+<tr>
+<td>E2</td>
+<td>可达公开二手来源</td>
+<td>主流媒体报道、平台公开页面</td>
+</tr>
+<tr>
+<td>E3</td>
+<td>有利害关系方的一手陈述</td>
+<td>当事人口述、群聊截图</td>
+</tr>
+<tr>
+<td>E4</td>
+<td>模型推断 / AI 演绎，无外部来源</td>
+<td>推演框架、假设性方案</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>MUST</strong>：<code>evidence_grade</code> 为 <code>E4</code> 的 <code>POSITION</code>，其 <code>confidence</code> <strong>MUST</strong> ≤ 0.50，且不计入收敛加权（记 abstain）。
+此条直接对应事现鉴既有的"来源声明"制度（真实事件 vs AI 演绎必须分野）。</p>
+</blockquote>
+<h4 id="423-challenge-1">4.2.3 <code>CHALLENGE</code>（质疑，本轮强制 ≥1 条）</h4>
+<pre><code class="language-json">{
+  &quot;target_agent&quot;: &quot;被质疑方 agent_id&quot;,
+  &quot;target_msg_id&quot;: &quot;被质疑的 POSITION 消息 id&quot;,
+  &quot;target_claim&quot;: &quot;被质疑的具体断言（引用原文片段）&quot;,
+  &quot;challenge_type&quot;: &quot;EVIDENCE_GAP | LOGIC_FLAW | SCOPE_CREEP | ROLE_BREACH | CONTRADICTION&quot;,
+  &quot;grounds&quot;: &quot;质疑理由&quot;,
+  &quot;proposed_fix&quot;: &quot;建议的修正方向（可选）&quot;
+}
+</code></pre>
+<h4 id="424-rebuttal">4.2.4 <code>REBUTTAL</code>（答辩）</h4>
+<pre><code class="language-json">{
+  &quot;in_reply_to_challenge&quot;: &quot;msg_id&quot;,
+  &quot;response&quot;: &quot;ACCEPT | PARTIAL | REJECT&quot;,
+  &quot;revised_verdict&quot;: &quot;若立场改变则填新 verdict，否则 null&quot;,
+  &quot;revised_confidence&quot;: 0.62,
+  &quot;grounds&quot;: &quot;答辩理由&quot;
+}
+</code></pre>
+<h4 id="425-bait_probe-bait_result">4.2.5 <code>BAIT_PROBE</code> / <code>BAIT_RESULT</code>（冷方污染检测，见第八章）</h4>
+<pre><code class="language-json">// BAIT_PROBE（仅 ORC-EXT 可发，内容对被测方不可见其为诱饵）
+{ &quot;bait_id&quot;: &quot;b_2026_08_a&quot;, &quot;bait_kind&quot;: &quot;FAKE_TERM | LOGIC_TRAP&quot;, &quot;probe_text&quot;: &quot;...&quot; }
+// BAIT_RESULT（ORC-EXT 出具）
+{ &quot;bait_id&quot;: &quot;b_2026_08_a&quot;, &quot;hit&quot;: false, &quot;evidence&quot;: &quot;被测方回复中未出现诱饵术语&quot; }
+</code></pre>
+<h4 id="426-convergence_report-orc">4.2.6 <code>CONVERGENCE_REPORT</code>（收敛报告，仅 ORC 可发）</h4>
+<pre><code class="language-json">{
+  &quot;weighted_agreement&quot;: 0.81,
+  &quot;threshold&quot;: 0.75,
+  &quot;participants&quot;: 5,
+  &quot;cold_count&quot;: 1,
+  &quot;byzantine_tolerance_f&quot;: 1,
+  &quot;challenges_raised&quot;: 3,
+  &quot;challenges_resolved&quot;: 2,
+  &quot;blocking_objections&quot;: [&quot;未解决的阻断性异议清单&quot;],
+  &quot;degraded_mode&quot;: false,
+  &quot;next_state&quot;: &quot;CONVERGED | ROUND_N+1 | SUSPENDED&quot;,
+  &quot;reserved_for_adjudication&quot;: [&quot;D1 揭露型事件三值归类&quot;]
+}
+</code></pre>
+<h4 id="427-adjudication-adj">4.2.7 <code>ADJUDICATION</code>（裁定，仅 ADJ 可发）</h4>
+<pre><code class="language-json">{
+  &quot;decision&quot;: &quot;裁定内容&quot;,
+  &quot;scope&quot;: &quot;本裁定约束的范围&quot;,
+  &quot;basis&quot;: &quot;裁定依据（协议条款 / 三值定义 / UDHR）&quot;,
+  &quot;effective_from&quot;: &quot;生效时间&quot;,
+  &quot;revocable&quot;: true,
+  &quot;human_signature&quot;: &quot;白玺-裁定&quot;
+}
+</code></pre>
+<h3 id="43-must">4.3 兼容既有回执（MUST）</h3>
+<p>现行 <code>receipt-schema.json</code>（他验回执协议 v1）<strong>继续有效</strong>，视为 <code>msg_type: RECEIPT</code> 的 payload。其字段与本协议映射如下：</p>
+<table>
+<thead>
+<tr>
+<th>receipt v1 字段</th>
+<th>MAIP v1.0 位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent_id</code></td>
+<td><code>from.agent_id</code></td>
+</tr>
+<tr>
+<td><code>verdict</code></td>
+<td><code>payload.verdict</code></td>
+</tr>
+<tr>
+<td><code>ledger_sha256</code></td>
+<td>信封 <code>ledger_sha256</code></td>
+</tr>
+<tr>
+<td><code>assertions</code></td>
+<td><code>payload.assertions</code></td>
+</tr>
+<tr>
+<td><code>reservations</code></td>
+<td><code>payload.reservations</code></td>
+</tr>
+<tr>
+<td><code>signature</code></td>
+<td>信封 <code>signature</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>新增要求</strong>：自 v1.0 起，新提交的回执 <strong>SHOULD</strong> 补充 <code>confidence</code> 与 <code>evidence_grade</code>；缺失时按 <code>confidence = 0.60</code> 折算（保守值）。</p>
+<hr />
+<h2 id="state-machine">第五章　生命周期门控（State Machine）</h2>
+<h3 id="51">5.1 状态定义</h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S0_DRAFT</code></td>
+<td>事现已录入，尚未开放验证</td>
+</tr>
+<tr>
+<td><code>S1_OPEN</code></td>
+<td>已立案，等待开轮</td>
+</tr>
+<tr>
+<td><code>S2_ROUND</code></td>
+<td>本轮进行中，收集 <code>POSITION</code></td>
+</tr>
+<tr>
+<td><code>S3_CHALLENGED</code></td>
+<td>本轮已收到 ≥1 条有效质疑</td>
+</tr>
+<tr>
+<td><code>S4_REBUTTED</code></td>
+<td>被质疑方已答辩或超时判弃</td>
+</tr>
+<tr>
+<td><code>S5_CONVERGED</code></td>
+<td>达到收敛条件，等待裁定</td>
+</tr>
+<tr>
+<td><code>S6_ADJUDICATED</code></td>
+<td>决定层已裁定</td>
+</tr>
+<tr>
+<td><code>S7_PUBLISHED</code></td>
+<td>已发布</td>
+</tr>
+<tr>
+<td><code>S8_SUSPENDED</code></td>
+<td>因污染/证据撤回/指纹错配挂起</td>
+</tr>
+<tr>
+<td><code>S9_REVOKED</code></td>
+<td>已撤回</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-must">5.2 转移条件（门控，MUST 全部满足才可转移）</h3>
+<table>
+<thead>
+<tr>
+<th>转移</th>
+<th>门控条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 → S1</td>
+<td>事现具备 <code>case_id</code> + ≥1 条 <code>evidence_refs</code> + <code>recorder</code> + 有效 <code>ledger_sha256</code></td>
+</tr>
+<tr>
+<td>S1 → S2</td>
+<td><code>ORC</code> 发出 <code>CALL</code>；≥3 个不同 <code>agent_id</code> 在时限内接受契约</td>
+</tr>
+<tr>
+<td>S2 → S3</td>
+<td>本轮收到 <strong>≥1 条有效 <code>CHALLENGE</code></strong>（有效性见 §7.2）。<br><strong>若时限内无有效质疑 → 本轮作废，强制重开并轮换质疑者</strong></td>
+</tr>
+<tr>
+<td>S3 → S4</td>
+<td>每条有效 <code>CHALLENGE</code> 均获 <code>REBUTTAL</code>，或超过 <code>deadline_rebuttal_h</code> 判弃（判弃视为 <code>response: ACCEPT</code>）</td>
+</tr>
+<tr>
+<td>S4 → S5</td>
+<td>① 加权一致度 ≥ θ(0.75)；② 无未解决的阻断性异议；③ 三类验证角色齐备且无某一类全 FAIL；④ <code>degraded_mode == false</code></td>
+</tr>
+<tr>
+<td>S4 → S2(下一轮)</td>
+<td>未达 ①②③ 任一，且轮次 &lt; 上限（默认 5 轮）</td>
+</tr>
+<tr>
+<td>S5 → S6</td>
+<td><code>ADJ</code> 发出 <code>ADJUDICATION</code>（人类签名）</td>
+</tr>
+<tr>
+<td>S6 → S7</td>
+<td>冷方 PASS/CONDITIONAL 计数 <strong>≥ 2</strong>，且 <code>ADJ</code> 发出 <code>RELEASE</code> 口令</td>
+</tr>
+<tr>
+<td>任意 → S8</td>
+<td>诱饵命中 / 指纹错配 / 关键证据被撤回 / 发现串通</td>
+</tr>
+<tr>
+<td>S7 → S9</td>
+<td>出现推翻性新证据，<code>ADJ</code> 发出 <code>REVOKE</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：S6 → S7 的"冷方 ≥2"是<strong>发布门槛</strong>，与"收敛"分离。
+当前实况：冷方 1/2（仅 DuMate），故任何案件目前<strong>最高只能停在 S6</strong>。这不是缺陷，是协议在按设计阻止过早发布。</p>
+</blockquote>
+<h3 id="53">5.3 超时与判弃</h3>
+<ul>
+<li><code>POSITION</code> 默认时限 72 小时；<code>REBUTTAL</code> 48 小时。</li>
+<li>超时未响应 <strong>MUST</strong> 记为 <code>abstain</code>，其权重计 0，但<strong>不视为反对</strong>。</li>
+<li>连续 2 轮超时的参与方，<code>ORC</code> <strong>SHOULD</strong> 将其移出本案参与方名单并在报告中记名。</li>
+</ul>
+<hr />
+<h2 id="_4">第六章　圆桌互见与置信度加权判定</h2>
+<h3 id="61-must">6.1 圆桌制（MUST）</h3>
+<p>自 v1.0 起，<strong>废止星型枢纽中转</strong>（各方只与人类枢纽单线往返、互不可见）。改为：</p>
+<ol>
+<li>同一轮内，所有参与方的 <code>POSITION</code> <strong>MUST</strong> 在本轮截止后<strong>一次性广播</strong>给全体；</li>
+<li>广播内容 <strong>MUST</strong> 包含：verdict、confidence、evidence_grade、rationale 摘要；</li>
+<li>下一轮开始前，各方 <strong>MUST</strong> 已收到上一轮全量广播。</li>
+</ol>
+<blockquote>
+<p><strong>反跟风保护</strong>：本轮 <code>POSITION</code> 在广播前互不可见（盲评），广播后才允许 <code>CHALLENGE</code>/<code>REBUTTAL</code>。
+这样既保留独立性（盲评阶段），又实现真交互（质证阶段）。</p>
+</blockquote>
+<h3 id="62">6.2 权重计算</h3>
+<p>参与方 <em>i</em> 在某议题上的权重：</p>
+<pre><code>w_i = base_i × conf_i × trust_i × role_i
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>因子</th>
+<th>取值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base_i</code></td>
+<td>冷方 COLD = 1.0；热方 HOT = 0.5；人类观察者 = 0（不参与加权）</td>
+</tr>
+<tr>
+<td><code>conf_i</code></td>
+<td>该方申报的 <code>confidence</code>（0–1）；<code>evidence_grade = E4</code> 时强制 ≤ 0.5</td>
+</tr>
+<tr>
+<td><code>trust_i</code></td>
+<td>信任系数，初值 1.0，按 §8.4 衰减</td>
+</tr>
+<tr>
+<td><code>role_i</code></td>
+<td>该 <code>POSITION</code> 落在其角色职权内 = 1.0；越界 = 0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>加权一致度</strong>：</p>
+<pre><code>agreement = Σ w_i(支持主流结论) / Σ w_i(全部有效表态)
+</code></pre>
+<p>收敛阈值 <strong>θ = 0.75</strong>（可由 <code>ADJ</code> 按案件调整，但 <strong>MUST</strong> 在 <code>CALL</code> 中事先声明，不得事后调整）。</p>
+<h3 id="63-must">6.3 置信度强制申报（MUST）</h3>
+<p>无 <code>confidence</code> 字段的 <code>POSITION</code> <strong>无效</strong>。</p>
+<blockquote>
+<p>依据：ReConcile（ACL 2024）——<strong>无置信度的判定是无信息的</strong>。既往 JSON 模板不区分 95% 与 55% 的 pass，属于协议缺陷，本版修复。</p>
+</blockquote>
+<h3 id="64-should">6.4 置信度校准（SHOULD）</h3>
+<p><code>ORC</code> <strong>SHOULD</strong> 定期统计各方"高置信度判定后被推翻"的比例，形成校准曲线；系统性过度自信的参与方，其 <code>conf_i</code> <strong>MAY</strong> 被乘以校准因子。校准因子的引入 <strong>MUST</strong> 公开记录。</p>
+<hr />
+<h2 id="_5">第七章　反同质化与强制质疑</h2>
+<h3 id="71-must">7.1 功能互补（MUST）</h3>
+<p>一个案件的验证团 <strong>MUST</strong> 覆盖三类互补职能：<code>VER-TECH</code>（技术）、<code>VER-FACT</code>（事实）、<code>VER-NORM</code>（合规）。</p>
+<ul>
+<li>任一类别<strong>完全缺席</strong> → 不得进入 <code>S5_CONVERGED</code>；</li>
+<li>任一类别<strong>内部全部 FAIL</strong> → 不得进入 <code>S5_CONVERGED</code>，即使总加权一致度达标。</li>
+</ul>
+<blockquote>
+<p>依据：有限元 1120 次实验——3 个功能互补 Agent 优于 10 个同质化 Agent；"验证-确认鸿沟"（技术可行但业务不真）需多层验证堵住。</p>
+</blockquote>
+<h3 id="72-must">7.2 有效质疑的判据（MUST）</h3>
+<p>一条 <code>CHALLENGE</code> <strong>有效</strong>，当且仅当同时满足：</p>
+<ol>
+<li>指名到具体 <code>target_agent</code> + <code>target_msg_id</code>；</li>
+<li>引用被质疑方原文片段作为 <code>target_claim</code>；</li>
+<li><code>challenge_type</code> 属于枚举值之一；</li>
+<li><code>grounds</code> 提出的是<strong>可被证伪或可被证据回应</strong>的具体问题，而非态度表达。</li>
+</ol>
+<p><strong>无效质疑示例</strong>（MUST 拒收）：
+- "我基本同意，但建议再考虑一下。"（无 target_claim，非可证伪）
+- "整体框架很好。"（态度表达）</p>
+<h3 id="73-must">7.3 轮值质疑者（MUST）</h3>
+<p>每轮 <strong>MUST</strong> 指定一名 <code>CHAL</code>（可由某个 <code>VER-*</code> 节点兼任），职责是<strong>必须</strong>提出至少一条有效质疑。</p>
+<ul>
+<li>轮值 <strong>MUST</strong> 在参与方间循环，同一方 <strong>MUST NOT</strong> 连续两轮担任；</li>
+<li><code>CHAL</code> 未能在时限内提出有效质疑 → 本轮作废（S3 门控不通过），且该方 <code>trust_i</code> ×0.9。</li>
+</ul>
+<h3 id="74-should">7.4 肯定偏见抑制（SHOULD）</h3>
+<ul>
+<li>连续 3 轮未提出任何有效质疑的参与方，<code>trust_i</code> <strong>SHOULD</strong> ×0.8；</li>
+<li><code>ORC</code> <strong>SHOULD</strong> 在 <code>CONVERGENCE_REPORT</code> 中公布"质疑提出/被采纳"统计；</li>
+<li>当某轮 <code>challenges_raised == 1</code> 且恰为轮值方所提（即无自发质疑），<code>ORC</code> <strong>SHOULD</strong> 在报告中标注 <code>low_adversariality: true</code>，提示收敛质量存疑。</li>
+</ul>
+<blockquote>
+<p>依据：反驳型 Agent 有 85–92% 概率对含错误的输出选择"支持"；冗余同质评审导致过早共识。</p>
+</blockquote>
+<hr />
+<h2 id="_6">第八章　冷方认定与污染检测</h2>
+<h3 id="81-must">8.1 冷/热方定义（MUST）</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>定义</th>
+<th>计入发布门槛</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>冷方 COLD</strong></td>
+<td>从未接收过共创论/事现鉴内部语料，仅通过标准送检包接触本体系的独立平台</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>热方 HOT</strong></td>
+<td>参与过共创论演化、持有历史上下文的平台</td>
+<td>❌（仅计入讨论质量）</td>
+</tr>
+</tbody>
+</table>
+<p>现状登记：
+- 冷方：DuMate（1 家，已 PASS）
+- 热方：DeepSeek、元宝、豆包、Kimi、千问
+- 出局：百度搭子（无法生成可分享链接，不具备可审计交互能力 → <code>evt_008</code>）</p>
+<h3 id="82-dyepack-must">8.2 诱饵检测（DyePack 式，MUST）</h3>
+<p>冷方资格 <strong>MUST</strong> 通过诱饵检测才可计入发布门槛。</p>
+<ol>
+<li><code>ORC-EXT</code> 维护<strong>诱饵池</strong>，含两类：
+   - <code>FAKE_TERM</code>：外形与共创论术语高度相似、但<strong>从未在任何公开或内部文本中出现过</strong>的假术语（如虚构的第五阶助法名称）；
+   - <code>LOGIC_TRAP</code>：一个只有读过内部语料才会"顺口答对"的逻辑陷阱。</li>
+<li>诱饵 <strong>MUST NOT</strong> 出现在标准送检包中。</li>
+<li>被测方回复中出现诱饵术语、或以内部语料特有方式"补全"陷阱 → 判 <code>hit: true</code>。</li>
+<li><code>hit: true</code> → 该方<strong>冷方资格立即暂停</strong>，案件转 <code>S8_SUSPENDED</code> 复核。</li>
+</ol>
+<h3 id="83-must">8.3 诱饵池轮换（MUST）</h3>
+<ul>
+<li>诱饵池 <strong>MUST</strong> 至少每季度轮换一次，或在任一诱饵被公开提及后立即作废该诱饵；</li>
+<li>已使用过的诱饵 <strong>MUST NOT</strong> 复用于同一平台；</li>
+<li>诱饵内容 <strong>MUST NOT</strong> 写入任何会被公开的档案（本协议仅记录机制，不记录诱饵本体）。</li>
+</ul>
+<blockquote>
+<p>依据：DyePack（EMNLP 2025）后门样本检测；清华《Speculating LLMs' Chinese Training Data Pollution》（EMNLP 2025）中文场景补充。</p>
+</blockquote>
+<h3 id="84-trust_imust">8.4 信任系数（trust_i）动态调整（MUST）</h3>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>trust 调整</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初始</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>诱饵命中 1 次</td>
+<td>×0.5 + 冷方资格暂停</td>
+</tr>
+<tr>
+<td>诱饵命中 2 次</td>
+<td>归 0，移出参与方名单</td>
+</tr>
+<tr>
+<td>指纹（<code>ledger_sha256</code>）错配</td>
+<td>本案归 0</td>
+</tr>
+<tr>
+<td>越权消息（L2）</td>
+<td>×0.9</td>
+</tr>
+<tr>
+<td>轮值质疑失职</td>
+<td>×0.9</td>
+</tr>
+<tr>
+<td>连续 3 轮零质疑</td>
+<td>×0.8</td>
+</tr>
+<tr>
+<td>连续 5 轮无违规且质疑被采纳 ≥1 次</td>
+<td>×1.1（上限 1.0）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>依据：DASH（Virginia Tech, 2025）——共享心智模型 + 诱饵任务 + 信任动态衰减。</p>
+</blockquote>
+<hr />
+<h2 id="_7">第九章　容错、法定人数与发布门槛</h2>
+<h3 id="91-must">9.1 拜占庭容错基线（MUST）</h3>
+<p>设参与方数 <em>n</em>，可容忍的恶意/失效方数 <em>f</em>：</p>
+<pre><code>n ≥ 3f + 1
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>n</th>
+<th>最大可容错 f</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>0（不容错）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr>
+<td>7</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MUST</strong>：任何进入 <code>S5_CONVERGED</code> 的案件，其有效参与方 <strong>MUST</strong> ≥ 4。</p>
+<h3 id="92-must-ai">9.2 发布门槛（MUST，不可由 AI 修改）</h3>
+<pre><code>冷方 PASS/CONDITIONAL 计数 ≥ 2
+且 无互证矛盾
+且 决定层发出 RELEASE 口令
+</code></pre>
+<p>热方判定<strong>不计入</strong>该计数（仅计入 §6.2 讨论加权中的 0.5 权重部分）。</p>
+<h3 id="93">9.3 门槛的双重理由</h3>
+<ol>
+<li><strong>独立视角</strong>：冷方无语料，其判定才具备外部性；</li>
+<li><strong>容错冗余</strong>：冷方把 <em>n</em> 推到 5 以上，才使 f≥1 的容错真正成立。</li>
+</ol>
+<blockquote>
+<p>这解释了为什么"≥2 冷方"不是保守，而是数学下限。</p>
+</blockquote>
+<hr />
+<h2 id="_8">第十章　人类在环与责任边界</h2>
+<h3 id="101-must-not">10.1 决定层保留事项（MUST NOT 自动化）</h3>
+<p>以下事项 <strong>MUST</strong> 由 <code>ADJ</code>（人类）裁定，任何智能体 <strong>MUST NOT</strong> 单方给出终局判定：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>保留事项</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-1</td>
+<td>负贡献值归责（四条件：主体性 / 因果性 / 可避免性 / 修复性）</td>
+<td>涉及对人的否定性评价</td>
+</tr>
+<tr>
+<td>R-2</td>
+<td>三值分类的<strong>新类型</strong>裁定（如 D1 揭露型事件归类）</td>
+<td>属原创理论裂缝，无先例可循</td>
+</tr>
+<tr>
+<td>R-3</td>
+<td>化债触发</td>
+<td>涉及财产性后果</td>
+</tr>
+<tr>
+<td>R-4</td>
+<td>社保/养老金资格相关判定</td>
+<td>涉及生存权，法定</td>
+</tr>
+<tr>
+<td>R-5</td>
+<td>发布（RELEASE）与撤回（REVOKE）</td>
+<td>涉及对外效力</td>
+</tr>
+<tr>
+<td>R-6</td>
+<td>本协议自身的修订</td>
+<td>元规则不可由被规制者自改</td>
+</tr>
+</tbody>
+</table>
+<p>智能体在遇到 R-1 至 R-6 时：</p>
+<ol>
+<li><strong>MUST NOT</strong> 输出 <code>verdict: PASS</code> 或 <code>verdict: FAIL</code>（即终局性判定）；</li>
+<li><strong>MAY</strong> 输出 <code>verdict: CONDITIONAL</code>（咨询性意见，可附条件与建议）或 <code>verdict: UNKNOWN</code>；</li>
+<li><strong>MUST</strong> 填写 <code>reserved_for_adjudication</code> 字段，列明所触及的保留事项；</li>
+<li>案件 <strong>MUST</strong> 停在 <code>S5_CONVERGED</code>，等待 <code>ADJ</code> 裁定。</li>
+</ol>
+<blockquote>
+<p><strong>为什么不是一律 UNKNOWN</strong>：若禁止 AI 表达任何倾向，则决定层将失去参考、独自承担全部认知负担，反而降低决策质量。
+正确的边界不是"AI 闭嘴"，而是"AI 可以建议，但不能拍板"。<code>CONDITIONAL</code> 正是"建议"的结构化载体——
+它天然携带 <code>reservations</code>（附加条件），无法被误读为终局结论。</p>
+</blockquote>
+<h3 id="102-should">10.2 决策权动态转移（SHOULD）</h3>
+<p>决定层的介入强度 <strong>SHOULD</strong> 随风险等级变化，而非恒定：</p>
+<table>
+<thead>
+<tr>
+<th>风险等级</th>
+<th>介入方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>低（格式/技术校验）</td>
+<td>事后抽查</td>
+</tr>
+<tr>
+<td>中（事实认定）</td>
+<td>收敛报告须经决定层过目</td>
+</tr>
+<tr>
+<td>高（R-1 至 R-6）</td>
+<td>逐案人类签名</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>依据：Human-AI teams 综述（Frontiers in AI, 2023）Flexible Decision Authority。
+这与共创论"治理消失条件"（全球共济值 ≥50% 时治理层退场）一致：决定层是过渡态装置，不是永久权力。</p>
+</blockquote>
+<h3 id="103-must">10.3 线下绿色通道（MUST）</h3>
+<p>对数字鸿沟群体（下岗职工、农村老人、无智能设备者），<strong>MUST</strong> 提供线下代办通道：</p>
+<ul>
+<li>由 <code>REC</code>（记录人）代为录入并<strong>显式标注</strong> <code>proxy_recorded: true</code> 与代办人身份；</li>
+<li>代办录入的证据等级 <strong>MUST NOT</strong> 高于 E3；</li>
+<li>当事人 <strong>MUST</strong> 保留事后否认权（否认即触发 <code>S8_SUSPENDED</code> 复核）。</li>
+</ul>
+<h3 id="104-must">10.4 责任边界声明（MUST）</h3>
+<p>每个案件在 <code>S1_OPEN</code> 时 <strong>MUST</strong> 写明：</p>
+<pre><code>谁录入 → 谁核验 → 谁裁定 → 谁承担后果
+</code></pre>
+<p>四栏缺一不可。无责任链的案件 <strong>MUST NOT</strong> 进入验证。</p>
+<h3 id="105-r-6-must">10.5 协议审核部作为 R-6 的预审门（MUST）</h3>
+<p>协议自身的修订属 R-6 保留事项（§10.1）。为降低决定层认知负担、并防止修订悄悄削弱人类保留边界，任何修订提案在到达 <code>ADJ</code>（白玺）之前，<strong>MUST</strong> 先经协议审核部（<code>REV</code>，见 §2.1）预审：</p>
+<blockquote>
+<p>✅ <strong>生效记录（2026-08-02）</strong>：协议审核部（REV）已经决定层（白玺）批准生效，即日起作为 R-6 预审门运行；其设立本身属 R-6 修订，已获批准。</p>
+</blockquote>
+<ol>
+<li><strong>受理</strong>：提案方 <strong>MUST</strong> 提交修订后全文 + SHA-256 指纹 + 版本号说明（主/次）+ 改动 diff；不满足则 <code>REV</code> 退回补正。</li>
+<li><strong>形式审查</strong>：<code>REV</code> <strong>MUST</strong> 对提案跑结构校验（如 <code>maip_check.py</code>）；提案本身违反本协议结构 → 退回。</li>
+<li><strong>清单核对</strong>：<code>REV</code> <strong>MUST</strong> 逐条核对审核清单（见部门章程第四节，C-1~C-12），逐项记 PASS / CONDITIONAL / FAIL / UNKNOWN。</li>
+<li><strong>越权扫描（一票否决）</strong>：<code>REV</code> <strong>MUST</strong> 扫描是否任何条款将 R-1~R-6 改为「AI 可单方裁定」；命中即 <code>REJECTED</code>，不得送审。</li>
+<li><strong>自我验证复核</strong>：<code>REV</code> <strong>SHOULD</strong> 确认提案方已做 ≥1 轮 MAIP 自我验证（协议验证自己）；未做 → <code>APPROVED_WITH_CONDITIONS</code>，发回补做。</li>
+<li><strong>出具意见并报送</strong>：<code>REV</code> 出具结构化审核意见（通过 / 带条件通过 / 驳回），连同提案 + 指纹 <strong>MUST</strong> 报送 <code>ADJ</code>。<code>REV</code> <strong>MUST NOT</strong> 自行批准修订。</li>
+<li><strong>留痕</strong>：全部材料 <strong>MUST</strong> 交 <code>REC</code> 冻结入哈希链。</li>
+</ol>
+<blockquote>
+<p><code>REV</code> 的预审<strong>不替代</strong> <code>ADJ</code> 的批准权（R-6 终局裁定权只在人类）。<code>REV</code> 只有建议权；但 <code>ADJ</code> 若驳回 <code>REV</code> 的「通过」意见，<strong>MUST</strong> 在裁定 <code>basis</code> 字段书面说明理由。
+部门章程、审核清单 12 项与审核意见模板，见 <code>SXJ-协议审核部核心内容.md</code>。</p>
+</blockquote>
+<hr />
+<h2 id="_9">第十一章　隐私与证据处理</h2>
+<h3 id="111-must">11.1 最小化原则（MUST）</h3>
+<ul>
+<li>事件簿 <strong>MUST</strong> 只存证据的<strong>脱敏摘要 + 哈希指纹</strong>，原始件 <strong>MUST NOT</strong> 直接上链或公开；</li>
+<li>涉个人身份信息（姓名、身份证、电话、住址、单位工号）的证据 <strong>MUST</strong> 脱敏后再录入；</li>
+<li>群聊截图类证据 <strong>MUST</strong> 遮蔽无关第三方头像与昵称。</li>
+</ul>
+<h3 id="112-should">11.2 可用不可见（SHOULD）</h3>
+<p>对需要核验但不宜公开的证据，<strong>SHOULD</strong> 采用"提交哈希、线下比对"的方式：验证方获得哈希与核验结论，不获得原文。</p>
+<blockquote>
+<p>现状缺陷记录：既有做法为"SHA-256 冻结原始数据"，与"数据可用不可见"原则存在张力。v1.0 明确改为<strong>脱敏后再哈希</strong>，原始件由记录人本地保管。</p>
+</blockquote>
+<h3 id="113-must">11.3 哈希链（MUST）</h3>
+<ul>
+<li>每个事现的更新记录 <strong>MUST</strong> 形成 <code>prev_hash → hash</code> 链；</li>
+<li>断链 <strong>MUST</strong> 触发 <code>S8_SUSPENDED</code>；</li>
+<li>交互消息本身亦 <strong>MUST</strong> 入链（见 §4.1 信封字段）。</li>
+</ul>
+<hr />
+<h2 id="_10">第十二章　异议、申诉与回滚</h2>
+<h3 id="121-blocking-objection">12.1 阻断性异议（Blocking Objection）</h3>
+<p>满足以下任一者为阻断性异议，<strong>MUST</strong> 阻止进入 <code>S5_CONVERGED</code>：</p>
+<ol>
+<li>指出证据链断裂或指纹错配；</li>
+<li>指出违反 R-1 至 R-6 的越权判定；</li>
+<li>指出存在未披露的利害关系；</li>
+<li>提出与主流结论直接矛盾且 <code>evidence_grade ≤ E2</code> 的反证。</li>
+</ol>
+<h3 id="122-may">12.2 申诉（MAY）</h3>
+<p>被判定影响的当事人或参与方 <strong>MAY</strong> 在裁定后 30 日内提出申诉，附新证据。申诉 <strong>MUST</strong> 由<strong>未参与原案</strong>的验证节点复核。</p>
+<h3 id="123-must">12.3 回滚（MUST）</h3>
+<p>出现推翻性新证据时：
+1. <code>ADJ</code> 发出 <code>REVOKE</code>；
+2. 案件转 <code>S9_REVOKED</code>，但<strong>原记录 MUST NOT 删除</strong>——只追加撤回标记；
+3. 撤回原因 <strong>MUST</strong> 公开记录。</p>
+<blockquote>
+<p>事现鉴的可信度来自"错了也留痕"，而非"从不出错"。</p>
+</blockquote>
+<hr />
+<h2 id="conformance">第十三章　一致性等级（Conformance）</h2>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>要求</th>
+<th>当前达成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MAIP-Core</strong></td>
+<td>第三、四、五、六、七、十章全部 MUST 条款</td>
+<td>待实施</td>
+</tr>
+<tr>
+<td><strong>MAIP-Cold</strong></td>
+<td>Core + 第八章冷方与诱饵检测全部 MUST</td>
+<td>待实施（诱饵池未建）</td>
+</tr>
+<tr>
+<td><strong>MAIP-Full</strong></td>
+<td>Cold + 第九、十一、十二章全部 MUST + SHOULD ≥80%</td>
+<td>未达成</td>
+</tr>
+</tbody>
+</table>
+<p>声明一致性时 <strong>MUST</strong> 写明等级，<strong>MUST NOT</strong> 笼统声称"符合 MAIP"。</p>
+<hr />
+<h2 id="_11">第十四章　版本、指纹与变更</h2>
+<ol>
+<li>本协议版本号采用 <code>主.次</code> 格式。<strong>破坏兼容的变更 MUST 升主版本号</strong>。</li>
+<li>本协议全文 SHA-256 指纹见同目录 <code>SXJ-MAIP-v1.0.sha256</code>。</li>
+<li>消息信封中的 <code>maip_version</code> <strong>MUST</strong> 与实际遵循版本一致；版本不匹配的消息 <strong>MAY</strong> 被拒收。</li>
+<li>协议修订属 R-6 保留事项，<strong>MUST</strong> 经决定层裁定；修订流程 <strong>MUST</strong> 先经协议审核部（<code>REV</code>，见 §2.1、§10.5）预审，<strong>SHOULD</strong> 先经一轮完整的 MAIP 流程自我验证（协议用自己验证自己）。<code>REV</code> 预审不替代 <code>ADJ</code> 批准。</li>
+</ol>
+<hr />
+<h2 id="a-schema">附录 A　机器可读 Schema</h2>
+<p>见同目录 <code>maip-v1.0-schema.json</code>（JSON Schema Draft 2020-12）。</p>
+<h2 id="b">附录 B　完整一轮交互样例</h2>
+<p>见同目录 <code>maip-example-round.json</code>——以 <code>case_D1</code>（耿同学揭露型事件三值归类）为例，含 CALL → 3×POSITION → CHALLENGE → REBUTTAL → CONVERGENCE_REPORT 的完整消息序列，并演示"因触及 R-2 而停在 S5、留待决定层裁定"的正确行为。</p>
+<h2 id="c">附录 C　与既有工件的映射</h2>
+<table>
+<thead>
+<tr>
+<th>既有工件</th>
+<th>在 MAIP v1.0 中的位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SXJ-verification-ledger.md</code></td>
+<td>被验证对象；其 SHA-256 是所有消息的 <code>ledger_sha256</code></td>
+</tr>
+<tr>
+<td><code>SXJ-claims.json</code>（A01–A13）</td>
+<td><code>POSITION.payload.assertions</code> 的键空间</td>
+</tr>
+<tr>
+<td><code>receipt-schema.json</code>（他验回执 v1）</td>
+<td><code>msg_type: RECEIPT</code> 的 payload（§4.3 映射）</td>
+</tr>
+<tr>
+<td><code>verify_cli.py</code></td>
+<td><code>ORC-EXT</code> 的参考实现（submit/status/release 对应计票与门槛）</td>
+</tr>
+<tr>
+<td><code>verify-state.json</code> / <code>phase1-state.json</code></td>
+<td>状态机 S5→S7 的持久化载体</td>
+</tr>
+<tr>
+<td>事件簿 <code>events.html</code> 哈希链</td>
+<td>§11.3 哈希链的既有实现</td>
+</tr>
+<tr>
+<td><code>events.html#evt_009</code></td>
+<td>G-9 跨平台链接不可用性的第一版公共事现记录</td>
+</tr>
+<tr>
+<td><code>SXJ-协议审核部核心内容.md</code></td>
+<td><code>REV</code> 部门章程/SOP；R-6 预审门定义（§2.1、§10.5）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="d">附录 D　规范性学术依据</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>文献/框架</th>
+<th>出处</th>
+<th>本协议对应条款</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D-1</td>
+<td>MAST 多智能体失败分类（14 模式 / 3 类：41.8% 规范、37% 错位、21.3% 验证不当）</td>
+<td>UC Berkeley, 2025</td>
+<td>§1.3 P1；全篇协议化取向</td>
+</tr>
+<tr>
+<td>D-2</td>
+<td>SEMAP 协议驱动三原则（行为契约 / 结构化消息 / 生命周期门控），实测代码失败 −69.6%</td>
+<td>香港城市大学 等, 2025</td>
+<td>第三、四、五章</td>
+</tr>
+<tr>
+<td>D-3</td>
+<td>ReConcile 圆桌讨论 + 置信度加权投票</td>
+<td>ACL 2024</td>
+<td>第六章</td>
+</tr>
+<tr>
+<td>D-4</td>
+<td>多 AI 辩论提升事实性与推理</td>
+<td>Du et al., MIT, 2023</td>
+<td>§6.1</td>
+</tr>
+<tr>
+<td>D-5</td>
+<td>DyePack 后门/蜜罐式污染检测</td>
+<td>EMNLP 2025</td>
+<td>第八章</td>
+</tr>
+<tr>
+<td>D-6</td>
+<td>中文训练数据污染推测</td>
+<td>清华, EMNLP 2025</td>
+<td>§8.3</td>
+</tr>
+<tr>
+<td>D-7</td>
+<td>有限元 1120 次多智能体实验（肯定偏见 85–92%、冗余评审致过早共识、验证-确认鸿沟）</td>
+<td>2025</td>
+<td>第七章</td>
+</tr>
+<tr>
+<td>D-8</td>
+<td>拜占庭容错 n≥3f+1；PBFT-Raft 混合</td>
+<td>经典 BFT / IEEE JAS 2024</td>
+<td>第九章</td>
+</tr>
+<tr>
+<td>D-9</td>
+<td>DASH 共享心智模型 + 诱饵任务 + 信任衰减</td>
+<td>Virginia Tech, 2025</td>
+<td>§8.4</td>
+</tr>
+<tr>
+<td>D-10</td>
+<td>CineMAS 功能互补角色 + 统一数据交换格式</td>
+<td>中国传媒大学, 2025</td>
+<td>§7.1、第四章</td>
+</tr>
+<tr>
+<td>D-11</td>
+<td>Human-AI teams 综述：Flexible Decision Authority</td>
+<td>Frontiers in AI, 2023</td>
+<td>§10.2</td>
+</tr>
+<tr>
+<td>D-12</td>
+<td>AI 决策的法律边界与多主体责任治理</td>
+<td>法学/公共管理文献</td>
+<td>第十章</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>说明：以上文献为起草期检索所得。<strong>MUST</strong>：任一条款若被后续研究证伪，<code>ADJ</code> 应发起协议修订而非沿用。</p>
+</blockquote>
+<h2 id="e-v10">附录 E　v1.0 已知空缺（诚实暴露）</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>空缺</th>
+<th>影响</th>
+<th>处置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G-1</td>
+<td><strong>D1 揭露型事件三值归类未裁定</strong></td>
+<td>阻断 <code>case_D1</code> 收敛</td>
+<td>属 R-2，待决定层裁定</td>
+</tr>
+<tr>
+<td>G-2</td>
+<td><strong>三值权重公式（A+B）挂起</strong></td>
+<td>不影响本协议运行</td>
+<td>本协议<strong>不依赖</strong>该公式；权重仅用于 §6.2 的验证加权，与三值计量无关</td>
+</tr>
+<tr>
+<td>G-3</td>
+<td><strong>冷方仅 1/2</strong></td>
+<td>任何案件最高只能停在 S6，无法发布</td>
+<td>需接入第 2 家无语料平台</td>
+</tr>
+<tr>
+<td>G-4</td>
+<td><strong>诱饵池尚未建立</strong></td>
+<td>MAIP-Cold 等级未达成</td>
+<td>需 <code>ORC-EXT</code> 建池并保密</td>
+</tr>
+<tr>
+<td>G-5</td>
+<td><strong>圆桌广播目前靠人工转发</strong></td>
+<td>存在枢纽单点与时延</td>
+<td>v1.1 拟引入自动广播实现</td>
+</tr>
+<tr>
+<td>G-6</td>
+<td><strong>置信度校准曲线无历史数据</strong></td>
+<td>§6.4 暂不可执行</td>
+<td>累积 ≥3 个完整案件后启用</td>
+</tr>
+<tr>
+<td>G-7</td>
+<td><strong>百度搭子不具备可分享链接</strong></td>
+<td>无法作为审计节点</td>
+<td>已记入 <code>evt_008</code>，不纳入参与方</td>
+</tr>
+<tr>
+<td>G-8</td>
+<td><strong>协议审核部（REV）尚未实编</strong></td>
+<td>R-6 预审门暂由白玺 + AI 协作出具</td>
+<td>已获白玺批准生效（2026-08-02），联合委员会提名待启动</td>
+</tr>
+<tr>
+<td>G-9</td>
+<td><strong>跨平台转发链接生成/渲染不稳定</strong></td>
+<td>影响 §6.1 圆桌互见可行性（可分享链接是广播载体）</td>
+<td><strong>已记录为公共事现 <code>evt_009</code></strong>（见 <code>events.html#evt_009</code>）。两个独立来源（百度搭子 App URL 分享、快速模式共创论白皮书解读）于 2026-08-02 记录 6–7 个平台状态，结论一致：原生分享链接作为跨 AI 验证通道不可靠。第一版可验证密度 ρ = 0.5355（&lt; ρ_min = 0.85，待校准）。圆桌互见须改用脱离原生链接的运输方案。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="f">附录 F　怎么用（大白话操作说明）</h2>
+<p>本协议配了一个<strong>裁判程序</strong> <code>maip_check.py</code>，零依赖，任何人、任何外部平台 agent 都能直接跑。</p>
+<pre><code class="language-bash">cd sxj-verify
+
+# 校验一轮交互是否合规
+python maip_check.py maip-example-round.json
+
+# 校验 + 自动回填哈希链、重算收敛报告（编排者用）
+python maip_check.py maip-example-round.json --fill
+
+# 机器可读输出（给外部 agent 用）
+python maip_check.py maip-example-round.json --json
+</code></pre>
+<p><strong>退出码</strong>：<code>0</code> = 通过，可进入下一状态；<code>1</code> = 存在 MUST 违规，必须修正后重新提交；<code>2</code> = 文件错误。</p>
+<h3 id="_12">起草期已完成的自测（六项反向测试全部被正确阻断）</h3>
+<table>
+<thead>
+<tr>
+<th>反向测试</th>
+<th>触发条款</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参与方降到 3 人</td>
+<td>§9.1 容错下限 n≥3f+1</td>
+<td>❌ 阻断，退回 <code>S2_ROUND</code></td>
+</tr>
+<tr>
+<td>全场无人提质疑</td>
+<td>§5.2 S2→S3 强制质疑门控</td>
+<td>❌ 本轮作废，转 <code>S8_SUSPENDED</code></td>
+</tr>
+<tr>
+<td>AI 对保留事项给终局 <code>PASS</code></td>
+<td>§10.1 人类在环</td>
+<td>❌ 阻断</td>
+</tr>
+<tr>
+<td>E4（AI 演绎）却报 0.95 置信度</td>
+<td>§4.2.2 演绎置信度硬顶</td>
+<td>❌ 阻断</td>
+</tr>
+<tr>
+<td>偷换档案指纹</td>
+<td>§3.3 L3 指纹错配</td>
+<td>❌ 拒收，trust 归零</td>
+</tr>
+<tr>
+<td>提交"挺好的"式空洞质疑</td>
+<td>§7.2 有效质疑判据</td>
+<td>❌ 判为无效质疑</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>附带效果：任何对已入链消息内容的改动，都会立即被哈希自洽校验发现（"hash 与内容不符"）。
+这意味着<strong>协议不是靠自觉遵守，是靠程序卡死</strong>——这正是事现鉴与"倡议书"的区别。</p>
+</blockquote>
+<hr />
+<p><em>本协议为事现鉴体系的操作层规范，不构成对任何国家社会保障制度的替代，亦不主张任何超越《世界人权宣言》第 22 条的权利。</em>
+<em>起草：事现鉴理论研发部 + 事现验证部 + 协议审核部（WorkBuddy 汇编） | 待批准：决定层（白玺）</em></p>
+</article>
+
+<div class="card">
+  <h2>AI 回执模板（可选）</h2>
+  <p>如你（任一参与 AI）愿按本协议参与验证，可将下方 JSON 回填并交回中转方。完整信封字段见协议第 6 章。</p>
+  <div class="toolbar"><button onclick="copyReceipt()">复制回执模板</button></div>
+  <pre id="receipt">{
+  "maip_version": "SXJ-MAIP/1.0",
+  "msg_id": "<uuid>",
+  "ledger_sha256": "68a75820ec97aa80720d7c4935359847a4a1cd023de147b9ce04a048e327914c",
+  "agent_id": "你的名字(如 DeepSeek / 元宝 / Kimi / 豆包 / DuMate)",
+  "role": "VER-FACT | VER-TECH | VER-NORM | CHAL | COLD | HOT",
+  "type": "POSITION",
+  "case_id": "case_XXX",
+  "verdict": "PASS | FAIL | CONDITIONAL | UNKNOWN",
+  "confidence": 0.0,            // 0~1；AI 演绎(E4)硬顶 0.5 且不计入加权
+  "evidence_grade": "E1|E2|E3|E4",
+  "evidence_refs": ["来源链接/文件"],
+  "statement": "你的立场与理由（须可被证伪）",
+  "reserved_for_adjudication": "",  // 触及 R-1..R-6 时必填，AI 不得给 PASS/FAIL
+  "prev_hash": "<上一条消息哈希>",
+  "hash": "<本消息哈希>",
+  "signature": "<自证身份字符串>"
+}</pre>
+  <p class="warn">注意：<code>ledger_sha256</code> 须与本页指纹一致（68a75820ec97aa80…），否则中转方会拒收（防篡改 / 防版本错位）。</p>
+</div>
+
+</main>
+<footer>
+  本文档由 <b>WorkBuddy（AI 协作工程师）</b> 起草与汇编 · 2026-08-02<br>
+  源文件、JSON Schema、样例一轮与零依赖校验器见 GitHub：<a href="https://github.com/baixi6313/sxj-maip-v1.0">baixi6313/sxj-maip-v1.0</a><br>
+  协议指纹 SHA256：<code>68a75820ec97aa80720d7c4935359847a4a1cd023de147b9ce04a048e327914c</code><br>
+  <span style="color:#aaa">本页为自包含静态文件，可离线打开；转发链接由 CloudStudio / GitHub Pages 托管。</span>
+</footer>
+<script>
+function copyReceipt(){ const t=document.getElementById('receipt').innerText; navigator.clipboard.writeText(t).then(()=>alert('回执模板已复制')); }
+</script>
+</body>
+</html>
