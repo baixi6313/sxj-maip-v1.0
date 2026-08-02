@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>事现鉴事件簿 · SXJ Verification Ledger</title>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff; --text: #1a1a1a; --muted: #555;
+    --blue: #2F6FED; --gold: #D99A2B; --coral: #D85A30; --border: #e0e0e0;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 2rem; }
+  h1 { font-size: 1.6rem; margin-bottom: .5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .event { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+  .event h2 { margin-top: 0; font-size: 1.25rem; }
+  .tag { display: inline-block; font-size: .75rem; padding: .15rem .6rem; border-radius: 999px; background: #eef4ff; color: var(--blue); margin-right: .5rem; }
+  .tag.coral { background: #fdede8; color: var(--coral); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  th, td { border: 1px solid var(--border); padding: .6rem .8rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  .rho-box { background: #f8fafc; border-left: 4px solid var(--gold); padding: 1rem; margin: 1rem 0; }
+  .rho-box code { background: #eef; padding: .1rem .3rem; border-radius: 4px; }
+  .hash { font-family: "SFMono-Regular", Consolas, monospace; font-size: .8rem; word-break: break-all; color: var(--muted); }
+  .meta { color: var(--muted); font-size: .85rem; margin: .3rem 0; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>事现鉴事件簿 <span style="font-size:.65em;color:#888;font-weight:400;">SXJ Verification Ledger</span></h1>
+<p class="subtitle">只记录可验证的事实。每个事件都带有时空坐标 (x, y, z, t) 与可验证密度 ρ。</p>
+
+<!-- evt_009: G-9 跨平台链接不可用性 -->
+<section class="event" id="evt_009">
+  <h2>evt_009 · 跨平台 AI 分享链接不可用性</h2>
+  <p>
+    <span class="tag">G-9</span>
+    <span class="tag coral">已记录事现</span>
+  </p>
+
+  <h3>时空坐标</h3>
+  <table>
+    <tr><th>维度</th><th>值</th><th>说明</th></tr>
+    <tr><td>x（平台）</td><td>微博 + 百度搭子 + 腾讯元宝 + 阿里千问 + DeepSeek + Kimi + 豆包 + WorkBuddy</td><td>多平台公共 Feed / 分享链接系统</td></tr>
+    <tr><td>y（主体）</td><td>白玺-寰宇光锥舟（人类记录者）</td><td>跨平台观测并汇总</td></tr>
+    <tr><td>z（上下文）</td><td>MAIP/1.0 圆桌互见依赖分享链接作为广播载体</td><td>直接关联 §6.1 圆桌机制</td></tr>
+    <tr><td>t（时间）</td><td>2026-08-02</td><td>观测与记录日期</td></tr>
+  </table>
+
+  <h3>主张（claims）</h3>
+  <ol>
+    <li><strong>C1</strong>：6 个主流 AI 平台中至少 5 个出现过分享链接无法生成、无法打开或内容渲染失败。</li>
+    <li><strong>C2</strong>：该现象不是单一用户电脑卡顿可解释（卡顿不会导致不同平台的 JS 空壳、API 失败、链接生成失败）。</li>
+    <li><strong>C3</strong>：因此，依靠各平台原生分享链接作为跨 AI 验证通道，在当前基础设施下不可行。</li>
+  </ol>
+
+  <h3>证据（evidence）</h3>
+  <table>
+    <tr><th>编号</th><th>类型</th><th>来源</th><th>SHA-256</th><th>说明</th></tr>
+    <tr>
+      <td>E1</td>
+      <td>截图（原始视觉记录）</td>
+      <td>百度搭子 · App URL 分享</td>
+      <td class="hash">3aa92f4bb0da5842f57fcb12f77c416542ea6c825b6af39d90e952e5c53848ea</td>
+      <td>表格列示六平台"之前确认 / 本次新增确认 / 综合状态"</td>
+    </tr>
+    <tr>
+      <td>E2</td>
+      <td>截图（原始视觉记录）</td>
+      <td>快速模式 · 共创论白皮书解读</td>
+      <td class="hash">d7e89d905418113477fa20577d24ff8070d8efe86f969fb07e32a8009596b4a6</td>
+      <td>表格列示七平台"链接可访问性 / 具体表现 / 记录时间"</td>
+    </tr>
+  </table>
+
+  <h3>可验证密度 ρ 计算（第一版）</h3>
+  <div class="rho-box">
+    <p>按 MAIP 映射：<code>ρ = conf × 来源独立度 × 证据等级 × 角色权重</code></p>
+    <ul>
+      <li><code>conf</code> = 0.85（两个独立来源的表格相互印证，结论一致）</li>
+      <li><code>来源独立度</code> = 0.90（两个不同 AI 系统独立生成汇总表）</li>
+      <li><code>证据等级</code> = 0.70（E2 截图 0.6 与 E3 结构化表格 0.8 的加权平均）</li>
+      <li><code>角色权重</code> = 1.00（人类记录者白玺，无 AI 单方面生成）</li>
+    </ul>
+    <p><strong>ρ = 0.85 × 0.90 × 0.70 × 1.00 = 0.5355</strong></p>
+    <p><em>注：ρ 计算方法是第一版操作化尝试，ρ_min = 0.85 尚未经真实数据校准。该值低于阈值，说明截图+表格虽然是真实事现，但可复现性和机器可读性仍受限。</em></p>
+  </div>
+
+  <h3>元数据</h3>
+  <p class="hash">ledger_id: evt_009_G9_cross_platform_link_failure_20260802</p>
+  <p class="hash">prev_hash: 0000000000000000000000000000000000000000000000000000000000000000（事件簿首条）</p>
+  <p class="hash">ledger_sha256: 0b1c70b3d6c2bde9e3d03701cb6439c4a710d9337b1e9d96815898887b5002f1（evt_009 章节内容 SHA-256）</p>
+  <p class="meta">记录人：白玺-寰宇光锥舟 · 汇编：WorkBuddy（AI 协作工程师）</p>
+  <p class="meta">状态：已记录 · 待后续独立复核</p>
+</section>
+
+<footer style="margin-top:3rem;color:#888;font-size:.85rem;border-top:1px solid #e0e0e0;padding-top:1rem;">
+  事现鉴事件簿 · 基于 SXJ-MAIP/1.0 · 不替代任何国家法律或社会保障制度
+</footer>
+
+</body>
+</html>
