@@ -95,6 +95,72 @@
   <p class="meta">状态：已记录 · 待后续独立复核</p>
 </section>
 
+<!-- evt_010: 境外朋友委托复测 G-9（跨境验证模式出现，低置信度辅助事现） -->
+<section class="event" id="evt_010">
+  <h2>evt_010 · 境外委托复测 G-9（跨境验证模式首现）</h2>
+  <p>
+    <span class="tag">G-9</span>
+    <span class="tag">跨境验证</span>
+    <span class="tag coral">辅助事现 · 低置信度</span>
+  </p>
+
+  <h3>时空坐标</h3>
+  <table>
+    <tr><th>维度</th><th>值</th><th>说明</th></tr>
+    <tr><td>x（平台）</td><td>境外大模型（朋友转述；含 Microsoft Copilot 链接读取尝试）</td><td>非平台直接截图，经转述</td></tr>
+    <tr><td>y（主体）</td><td>白玺-寰宇光锥舟（委托方）→ 境外朋友（执行方）</td><td>间接链：我→朋友→境外AI→朋友→我</td></tr>
+    <tr><td>z（上下文）</td><td>国际桌验证尝试 /「验证模式」向境外延伸</td><td>呼应 App 方案 j 法域维度</td></tr>
+    <tr><td>t（时间）</td><td>2026-08-02</td><td>委托与记录日期</td></tr>
+    <tr><td>j（法域）</td><td>国外</td><td>首次出现的境外法域维度样本</td></tr>
+  </table>
+
+  <h3>主张（claims）</h3>
+  <ol>
+    <li><strong>C1</strong>：事现鉴的验证模式已实际向境外延伸——白玺委托境外朋友在外国大模型上复测 G-9（跨平台链接生成/渲染不可用性）。</li>
+    <li><strong>C2</strong>：朋友转述其境外复测结论与国内一致；但因证据链含「我→朋友→境外AI→朋友→我」多个不可复核跳转，该结论不能直接作为境外平台的直接生成物证据。</li>
+    <li><strong>C3</strong>：取证过程中，朋友尝试将 <code>agentos-app.net</code> 链接交给 Microsoft Copilot 读取、要求「给网站站主一个回应」，首次结果不满意需换对话框重来——再次印证 G-9「链接作为交付载体不稳定」。</li>
+  </ol>
+
+  <h3>证据（evidence）</h3>
+  <table>
+    <tr><th>编号</th><th>类型</th><th>来源</th><th>SHA-256</th><th>说明</th></tr>
+    <tr>
+      <td>E1</td>
+      <td>截图（微信对话，原始视觉记录）</td>
+      <td>白玺-寰宇光锥舟 ↔ 境外朋友（Copilot 链接读取尝试）</td>
+      <td class="hash">ca13ab2e70d6d312df2fd792e0a6cb0d6ccfd4be4206c59360c82485aa083963</td>
+      <td>对话显示「把这个链接发给 Copilot」「不要这个 copilot，试一下在新对话框直接输入」</td>
+    </tr>
+    <tr>
+      <td>E2</td>
+      <td>转述陈述（利害关系方）</td>
+      <td>境外朋友 → 白玺（口头/文字转述）</td>
+      <td class="hash">—（转述未附平台直接截图）</td>
+      <td>朋友称境外大模型复测结论与国内 G-9 一致；无直接平台生成物佐证</td>
+    </tr>
+  </table>
+
+  <h3>可验证密度 ρ 计算（诚实降档）</h3>
+  <div class="rho-box">
+    <p>按 MAIP 映射：<code>ρ = conf × 来源独立度 × 证据等级 × 角色权重</code></p>
+    <ul>
+      <li><code>conf</code> = 0.75（转述结论一致 + 截图部分印证机制，但经多跳转述）</li>
+      <li><code>来源独立度</code> = 0.80（境外朋友独立于国内平台，但非独立直接观测）</li>
+      <li><code>证据等级</code> = 0.45（E1 截图约 0.6 + E2 转述 0.3 加权；主张本身间接）</li>
+      <li><code>角色权重</code> = 1.00（人类记录者白玺，无 AI 单方面生成）</li>
+    </ul>
+    <p><strong>ρ = 0.75 × 0.80 × 0.45 × 1.00 = 0.2700</strong></p>
+    <p><em>注：本事件明确为低置信度辅助事现，<b>不并入也不升级 evt_009</b>。其价值在于记录了「跨境验证模式」的出现，以及事现鉴「只记录可验证事实、不美化证据」的自我约束机制。ρ 远低于 ρ_min = 0.85，须待取得境外平台直接截图（带账号/时间戳/URL）方可提升。</em></p>
+  </div>
+
+  <h3>元数据</h3>
+  <p class="hash">ledger_id: evt_010_G9_overseas_friend_recheck_20260802</p>
+  <p class="hash">prev_hash: 0b1c70b3d6c2bde9e3d03701cb6439c4a710d9337b1e9d96815898887b5002f1（evt_009 ledger_sha256）</p>
+  <p class="hash">ledger_sha256: c7cbefc4a5934bcdeceba26d819a82039cd546ec06c24e09c36937087766d19b（evt_010 章节内容 SHA-256）</p>
+  <p class="meta">记录人：白玺-寰宇光锥舟 · 汇编：WorkBuddy（AI 协作工程师）</p>
+  <p class="meta">状态：已记录 · 低置信度辅助事现 · 待境外平台直接复核</p>
+</section>
+
 <footer style="margin-top:3rem;color:#888;font-size:.85rem;border-top:1px solid #e0e0e0;padding-top:1rem;">
   事现鉴事件簿 · 基于 SXJ-MAIP/1.0 · 不替代任何国家法律或社会保障制度
 </footer>
